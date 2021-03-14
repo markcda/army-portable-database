@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>arts/64/keep.svg</file>
+        <file>arts/64/libreoffice-base.svg</file>
+        <file>arts/64/libreoffice-draw.svg</file>
+        <file>arts/64/ms-excel.svg</file>
+        <file>arts/64/ms-powerpoint.svg</file>
+        <file>arts/64/ms-word.svg</file>
+        <file>arts/16/archive.svg</file>
+        <file>arts/16/edit-delete.svg</file>
+        <file>arts/16/edit.svg</file>
+        <file>arts/16/list-add.svg</file>
+        <file>arts/16/view-hidden.svg</file>
+    </qresource>
+</RCC>

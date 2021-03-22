@@ -16,21 +16,16 @@ class AddNodeDialog : public QDialog {
   Q_OBJECT
 public:
   // Конструкторы:
-  AddNodeDialog(Data *_data);
+  AddNodeDialog(Data *_data, QWidget *parent = nullptr);
 
 signals:
   DataBrick *sendResult(DataBrick *dataBrick);
 
 private:
-  // Константы:
-  inline static const QStringList bgColors = {"Белый",   "Чёрный",  "Синий",
-                                             "Красный", "Зелёный", "Жёлтый"};
-  inline static const QStringList textColors = {bgColors[0], bgColors[1]};
   // Объекты:
-  QUuid UUID;
-  QColor background_color;
-  QColor text_color;
-  QString name;
+  QLineEdit *nodeNameLine = nullptr;
+  QComboBox *bgColorComboBox = nullptr;
+  QComboBox *textColorComboBox = nullptr;
   Data *data = nullptr;
   // Методы:
   DataBrick *getDataBrick();

@@ -1,19 +1,26 @@
 #include "addnodedialog.h"
 
-AddNodeDialog::AddNodeDialog(Data *_data) {
+AddNodeDialog::AddNodeDialog(Data *_data, QWidget *parent) : QDialog(parent) {
   data = _data;
   setWindowTitle("Добавить раздел");
   auto *lt = new QGridLayout();
   auto *nodeNameLbl = new QLabel(this);
   nodeNameLbl->setText("Название раздела: ");
   lt->addWidget(nodeNameLbl, 0, 0);
-  auto *nodeNameLine = new QLineEdit(this);
+  nodeNameLine = new QLineEdit(this);
   lt->addWidget(nodeNameLine, 0, 1);
   auto *bgLbl = new QLabel(this);
   bgLbl->setText("Цвет раздела: ");
   lt->addWidget(bgLbl, 1, 0);
-  auto *bgColorComboBox = new QComboBox(this);
+  bgColorComboBox = new QComboBox(this);
   bgColorComboBox->addItems(bgColors);
+  lt->addWidget(bgColorComboBox, 1, 1);
+  auto *textLbl = new QLabel(this);
+  textLbl->setText("Цвет текста в разделе: ");
+  lt->addWidget(textLbl, 2, 0);
+  textColorComboBox = new QComboBox(this);
+  textColorComboBox->addItems(textColors);
+  lt->addWidget(textColorComboBox, 2, 1);
   auto *okBtn = new QPushButton(this);
   okBtn->setText("Добавить");
   connect(okBtn, &QPushButton::clicked, this, [this]() {
@@ -30,5 +37,9 @@ AddNodeDialog::AddNodeDialog(Data *_data) {
 
 DataBrick *AddNodeDialog::getDataBrick() {
   auto *brick = new DataBrick;
-//  brick->brickUUID =
+  brick->brickUUID = data->db->generateUUID();
+  brick->name = nodeNameLine->text();
+  brick->textColor = textColorComboBox->currentIndex();
+  brick->brickColor = bgColorComboBox->currentIndex();
+  return brick;
 }

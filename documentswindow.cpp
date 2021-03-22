@@ -124,6 +124,16 @@ void DocumentsWindow::goArchive() {
   drawNode();
 }
 
-void DocumentsWindow::addNode() {}
+void DocumentsWindow::addNode() {
+  auto *addNodeDialog = new AddNodeDialog(data, this);
+  connect(addNodeDialog, &AddNodeDialog::sendResult, this, &DocumentsWindow::processNode);
+  addNodeDialog->show();
+}
+
+void DocumentsWindow::processNode(DataBrick *dataBrick) {
+  DataBrick *curr = history.last();
+  curr->brickNodes.append(dataBrick);
+  drawNode();
+}
 
 void DocumentsWindow::addDocument() {}

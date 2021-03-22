@@ -1,6 +1,7 @@
 #ifndef DOCUMENTSWINDOW_H
 #define DOCUMENTSWINDOW_H
 
+#include "addnodedialog.h"
 #include "data.h"
 #include "documentwidget.h"
 #include "nodescollection.h"
@@ -38,5 +39,7 @@ private:
   void goArchive();
   void addNode();
   void addDocument();
+  void processNode(DataBrick *dataBrick);
+  void processDocument(Document *doc);
 };
 #endif

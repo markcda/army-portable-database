@@ -24,6 +24,9 @@ public:
   DataBrick *getRootDataBrick();
   DataBrick *getArchiveDataBrick();
 
+  //Статические методы:
+  static QUuid generateUUID();
+
 private:
   // Константы:
   inline static const QString DATABASE_FILENAME = "db.xml";
@@ -43,18 +46,20 @@ private:
   inline static const QString DATABASE_DOCATTR_ADDDATETIME = "from";
   inline static const QString DATABASE_DOCATTR_EXPIRES = "expires";
   inline static const QString DATABASE_DOCATTR_EXPIREDATETIME = "to";
+
   // Статические методы:
   static QDomElement createRootElement(QDomDocument *doc,
                                        QString rootElementName = "База данных");
   static QDomElement
   createArchiveElement(QDomDocument *doc,
                        QString archiveElementName = "Архив документов");
-  static QUuid generateUUID();
+
   // Объекты:
   QString dbDirectory;
   QDomDocument *xmlDataBase = nullptr;
   DataBrick *rootDataBrick = nullptr;
   DataBrick *archiveDataBrick = nullptr;
+
   // Методы:
   void syncDataBase();
   void generateData();

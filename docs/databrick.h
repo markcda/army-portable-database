@@ -14,7 +14,6 @@ struct DataBrick {
   QString name;
   // Идентификаторы раздела:
   QUuid brickUUID;
-  DataBrick *parent = nullptr;
   // Цвет кирпичика:
   QColor brickColor;
   QColor textColor;
@@ -22,5 +21,9 @@ struct DataBrick {
   QList<DataBrick *> brickNodes;
   QList<Document *> brickDocuments;
 };
+
+inline static const QStringList bgColors = {"Белый",   "Чёрный",  "Синий",
+                                           "Красный", "Зелёный", "Жёлтый"};
+inline static const QStringList textColors = {bgColors[0], bgColors[1]};
 
 #endif

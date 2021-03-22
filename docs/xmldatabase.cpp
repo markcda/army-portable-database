@@ -23,11 +23,12 @@ XMLDataBase::~XMLDataBase() {
 
 void XMLDataBase::createXMLDataBase(QString directoryPath) {
   QDomDocument xmlDataBase(DATABASE_DOCTYPE);
+  auto nodes = xmlDataBase.createElement(DATABASE_NODES_TAGNAME);
   auto root = createRootElement(&xmlDataBase);
   auto archive = createArchiveElement(&xmlDataBase);
-  xmlDataBase.appendChild(root);
-  xmlDataBase.appendChild(archive);
-  std::cout << xmlDataBase.toString().toStdString() << std::endl;
+  nodes.appendChild(root);
+  nodes.appendChild(archive);
+  xmlDataBase.appendChild(nodes);
   // Запись в файл:
   QDir::setCurrent(directoryPath);
   QFile xmlDataBaseFile(DATABASE_FILENAME);
@@ -40,7 +41,8 @@ DataBrick *XMLDataBase::getRootDataBrick() { return rootDataBrick; }
 
 DataBrick *XMLDataBase::getArchiveDataBrick() { return archiveDataBrick; }
 
-QDomElement XMLDataBase::createRootElement(QDomDocument *doc, QString rootElementName) {
+QDomElement XMLDataBase::createRootElement(QDomDocument *doc,
+                                           QString rootElementName) {
   QDomElement rootNode = doc->createElement(DATABASE_NODE_TAGNAME);
   rootNode.setAttribute(DATABASE_NODEATTR_NAME, rootElementName);
   rootNode.setAttribute(DATABASE_NODEATTR_UUID, generateUUID().toString());
@@ -49,7 +51,8 @@ QDomElement XMLDataBase::createRootElement(QDomDocument *doc, QString rootElemen
   return rootNode;
 }
 
-QDomElement XMLDataBase::createArchiveElement(QDomDocument *doc, QString archiveElementName) {
+QDomElement XMLDataBase::createArchiveElement(QDomDocument *doc,
+                                              QString archiveElementName) {
   QDomElement archiveNode = doc->createElement(DATABASE_NODE_TAGNAME);
   archiveNode.setAttribute(DATABASE_NODEATTR_NAME, archiveElementName);
   archiveNode.setAttribute(DATABASE_NODEATTR_UUID, generateUUID().toString());
@@ -81,17 +84,29 @@ void XMLDataBase::syncDataBase() {
 
 void XMLDataBase::generateData() {
   auto *newXmlDataBase = new QDomDocument(DATABASE_DOCTYPE);
-  newXmlDataBase->appendChild(generateDomElementFromDataBrick(rootDataBrick));
-  newXmlDataBase->appendChild(generateDomElementFromDataBrick(archiveDataBrick));
+  auto nodes = newXmlDataBase->createElement(DATABASE_NODES_TAGNAME);
+  nodes.appendChild(generateDomElementFromDataBrick(rootDataBrick));
+  nodes.appendChild(generateDomElementFromDataBrick(archiveDataBrick));
+  newXmlDataBase->appendChild(nodes);
   if (xmlDataBase)
     delete xmlDataBase;
   xmlDataBase = newXmlDataBase;
 }
 
 void XMLDataBase::loadData() {
-  QDomElement rootElement = xmlDataBase->childNodes().at(0).toElement();
+  QDomElement rootElement = xmlDataBase->childNodes()
+                                .at(0)
+                                .toElement()
+                                .childNodes()
+                                .at(0)
+                                .toElement();
   rootDataBrick = generateDataBrickFromDomElement(rootElement);
-  QDomElement archiveElement = xmlDataBase->childNodes().at(1).toElement();
+  QDomElement archiveElement = xmlDataBase->childNodes()
+                                   .at(0)
+                                   .toElement()
+                                   .childNodes()
+                                   .at(1)
+                                   .toElement();
   archiveDataBrick = generateDataBrickFromDomElement(archiveElement);
 }
 

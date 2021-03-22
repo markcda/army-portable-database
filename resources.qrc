@@ -11,5 +11,6 @@
         <file>arts/16/edit.svg</file>
         <file>arts/16/list-add.svg</file>
         <file>arts/16/view-hidden.svg</file>
+        <file>arts/64/datamodeler.svg</file>
     </qresource>
 </RCC>

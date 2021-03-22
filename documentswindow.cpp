@@ -1,6 +1,9 @@
 #include "documentswindow.h"
+#include <iostream>
 
 DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
+  setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
+  resize(1000, 560);
   data = new Data(this);
   history.append(data->db->getRootDataBrick());
   drawNode();
@@ -11,9 +14,9 @@ void DocumentsWindow::drawNode() {
   setWindowTitle(brick->name);
   if (cw)
     delete cw;
-  if (brick == data->db->getArchiveDataBrick()) {
+  if (brick == data->db->getArchiveDataBrick())
     navBar = getArchiveNavBar();
-  } else {
+  else {
     navBar = getNavBar();
     bottomToolBar = getBottomToolBar();
   }
@@ -28,7 +31,7 @@ void DocumentsWindow::drawNode() {
     docsLt->addWidget(new DocumentWidget(doc, data, sa));
   sa->setLayout(docsLt);
   clt->addWidget(sa);
-  if (bottomToolBar)
+  if (brick != data->db->getArchiveDataBrick())
     clt->addWidget(bottomToolBar);
   cw->setLayout(clt);
   setCentralWidget(cw);

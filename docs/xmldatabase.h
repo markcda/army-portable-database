@@ -29,6 +29,8 @@ private:
   inline static const QString DATABASE_FILENAME = "db.xml";
   inline static const QString DATABASE_DOCTYPE = "cclc-xml-db";
 
+  inline static const QString DATABASE_NODES_TAGNAME = "nodes";
+
   inline static const QString DATABASE_NODE_TAGNAME = "document-node";
   inline static const QString DATABASE_NODEATTR_NAME = "name";
   inline static const QString DATABASE_NODEATTR_UUID = "uuid";

@@ -7,6 +7,7 @@ SOURCES += \
     addnodedialog.cpp \
     docs/xmldatabase.cpp \
     documentwidget.cpp \
+    ex/exporter.cpp \
     firsttimesetupdialog.cpp \
     main.cpp \
     documentswindow.cpp \
@@ -21,6 +22,7 @@ HEADERS += \
     docs/xmldatabase.h \
     documentswindow.h \
     documentwidget.h \
+    ex/exporter.h \
     firsttimesetupdialog.h \
     nodescollection.h
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -14,6 +14,7 @@ struct DataBrick {
   QString name;
   // Идентификаторы раздела:
   QUuid brickUUID;
+  DataBrick *parent;
   // Цвет кирпичика:
   QColor brickColor;
   QColor textColor;

@@ -12,10 +12,9 @@ public:
   Data(QObject *parent = nullptr);
   // Объекты:
   XMLDataBase *db = nullptr;
+  QSettings *st = nullptr;
 
 private:
-  // Объекты:
-  QSettings *st = nullptr;
   // Методы:
   bool settingsFileExists(QSettings *settings);
   void firstSetup(QSettings *settings);

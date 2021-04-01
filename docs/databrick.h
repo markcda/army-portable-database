@@ -24,7 +24,7 @@ struct DataBrick {
 };
 
 inline static const QStringList bgColors = {"Белый",   "Чёрный",  "Синий",
-                                           "Красный", "Зелёный", "Жёлтый"};
+                                            "Красный", "Зелёный", "Жёлтый"};
 inline static const QStringList textColors = {bgColors[0], bgColors[1]};
 
 #endif

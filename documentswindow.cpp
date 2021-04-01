@@ -5,6 +5,10 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
   resize(1000, 560);
   data = new Data(this);
+  if (data->st->value("notFirstTime") != "not first time") {
+    (new FirstTimeSetupDialog(data, this))->exec();
+    data->st->setValue("notFirstTime", "not first time");
+  }
   history.append(data->db->getRootDataBrick());
   drawNode();
 }

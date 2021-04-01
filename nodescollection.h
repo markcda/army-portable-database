@@ -15,7 +15,7 @@ private:
   // Константы:
   const int NC_NODESINLINE = 4;
   const QString DBW_OBJNAME = "databrick";
-  const QString NC_BORDER = "border: 2px solid black;";
+  const QString NC_BORDER = "border-width: 2px; border-style: solid; ";
   // Объекты:
   QList<QWidget *> widgetCollection;
   // Методы:

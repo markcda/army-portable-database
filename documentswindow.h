@@ -4,6 +4,7 @@
 #include "addnodedialog.h"
 #include "data.h"
 #include "documentwidget.h"
+#include "firsttimesetupdialog.h"
 #include "nodescollection.h"
 #include <QGridLayout>
 #include <QHBoxLayout>

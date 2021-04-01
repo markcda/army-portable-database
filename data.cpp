@@ -2,7 +2,7 @@
 
 Data::Data(QObject *parent) : QObject(parent) {
   st = new QSettings(QSettings::IniFormat, QSettings::UserScope, "CCLC",
-                     "DocsDB", this);
+                     "ArmyDB", this);
   if (not settingsFileExists(st))
     firstSetup(st);
   db = new XMLDataBase(getSettingsFileDirectoryPath(st));

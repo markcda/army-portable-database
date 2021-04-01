@@ -9,17 +9,16 @@ DataBrickWidget::DataBrickWidget(DataBrick *_dataBrick, QWidget *parent)
   auto *lt = new QGridLayout();
   lt->setContentsMargins(0, 0, 0, 0);
   auto *lbl = new QLabel(dataBrick->name);
+  lbl->setObjectName(DBW_OBJNAME);
   QFont font;
   font.setBold(true);
   font.setPixelSize(14);
   lbl->setFont(font);
   lbl->setWordWrap(true);
-  setStyleSheet("#" + DBW_OBJNAME + " { color: rgb(" +
-                QString::number(dataBrick->brickColor.red()) + ", " +
-                QString::number(dataBrick->brickColor.green()) + ", " +
-                QString::number(dataBrick->brickColor.blue()) + "); }");
   connect(this, &DataBrickWidget::clicked, this,
           [this]() { emit openDataBrick(dataBrick); });
+  lt->addWidget(lbl);
+  setLayout(lt);
 }
 
 void DataBrickWidget::mouseReleaseEvent(QMouseEvent *e) {

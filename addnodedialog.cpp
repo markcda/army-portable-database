@@ -2,6 +2,7 @@
 
 AddNodeDialog::AddNodeDialog(Data *_data, QWidget *parent) : QDialog(parent) {
   data = _data;
+  setModal(true);
   setWindowTitle("Добавить раздел");
   auto *lt = new QGridLayout();
   auto *nodeNameLbl = new QLabel(this);
@@ -20,6 +21,7 @@ AddNodeDialog::AddNodeDialog(Data *_data, QWidget *parent) : QDialog(parent) {
   lt->addWidget(textLbl, 2, 0);
   textColorComboBox = new QComboBox(this);
   textColorComboBox->addItems(textColors);
+  textColorComboBox->setCurrentIndex(1);
   lt->addWidget(textColorComboBox, 2, 1);
   auto *okBtn = new QPushButton(this);
   okBtn->setText("Добавить");
@@ -39,7 +41,7 @@ DataBrick *AddNodeDialog::getDataBrick() {
   auto *brick = new DataBrick;
   brick->brickUUID = data->db->generateUUID();
   brick->name = nodeNameLine->text();
-  brick->textColor = textColorComboBox->currentIndex();
-  brick->brickColor = bgColorComboBox->currentIndex();
+  brick->textColor = getColorFromIndex(textColorComboBox->currentIndex());
+  brick->brickColor = getColorFromIndex(bgColorComboBox->currentIndex());
   return brick;
 }

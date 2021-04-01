@@ -3,6 +3,7 @@
 
 #include "data.h"
 #include <QDialog>
+#include <QFileDialog>
 #include <QFontMetrics>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -32,6 +33,7 @@ private:
   QPushButton *visioBtn = nullptr;
   QPushButton *acceptBtn = nullptr;
   // Методы:
+  void saveAll();
   void saveSettings(DocumentType docType, QString path);
   QString getPath(DocumentType docType);
   void updateAcceptEnabled();

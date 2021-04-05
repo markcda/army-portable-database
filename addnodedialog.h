@@ -30,18 +30,19 @@ private:
   // Методы:
   DataBrick *getDataBrick();
   QColor getColorFromIndex(int index) {
-      if (index == 0)
-        return QColor::fromRgb(255, 255, 255);
-      else if (index == 1)
-        return QColor::fromRgb(0, 0, 0);
-      else if (index == 2)
-        return QColor::fromRgb(0, 0, 255);
-      else if (index == 3)
-        return QColor::fromRgb(255, 0, 0);
-      else if (index == 4)
-        return QColor::fromRgb(0, 170, 0);
-      else return QColor::fromRgb(255, 255, 0);
-    }
+    if (index == 0)
+      return QColor::fromRgb(255, 255, 255);
+    else if (index == 1)
+      return QColor::fromRgb(0, 0, 0);
+    else if (index == 2)
+      return QColor::fromRgb(0, 0, 255);
+    else if (index == 3)
+      return QColor::fromRgb(255, 0, 0);
+    else if (index == 4)
+      return QColor::fromRgb(0, 170, 0);
+    else
+      return QColor::fromRgb(255, 255, 0);
+  };
 };
 
 #endif

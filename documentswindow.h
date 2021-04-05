@@ -1,6 +1,7 @@
 #ifndef DOCUMENTSWINDOW_H
 #define DOCUMENTSWINDOW_H
 
+#include "adddocumentdialog.h"
 #include "addnodedialog.h"
 #include "data.h"
 #include "documentwidget.h"
@@ -13,6 +14,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSpacerItem>
 #include <QToolButton>
 #include <QWidget>
 
@@ -23,6 +25,11 @@ public:
   DocumentsWindow(QWidget *parent = nullptr);
 
 private:
+  // Константы:
+  const QString wordPath = "wordPath";
+  const QString excelPath = "excelPath";
+  const QString pptPath = "pptPath";
+  const QString visioPath = "visioPath";
   // Объекты:
   Data *data = nullptr;
   QList<DataBrick *> history;

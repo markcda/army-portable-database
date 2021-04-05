@@ -44,4 +44,6 @@ void NodesCollection::resizeEvent(QResizeEvent *event) {
   int maxw = (width() - 30) / 4;
   for (auto *widget : widgetCollection)
     widget->setMaximumWidth(maxw);
+  if (widgetCollection.length() == 0)
+    resize(width(), 40);
 }

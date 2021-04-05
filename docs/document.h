@@ -1,6 +1,8 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
+#include "docs/databrick.h"
+#include <QColor>
 #include <QDateTime>
 #include <QString>
 #include <QUuid>
@@ -19,6 +21,8 @@ struct Document {
   // Дата и время истечения срока действия:
   bool hasDateOfExpire;
   QDateTime expiringDateTime;
+  QColor backgroundColor;
+  QColor textColor;
 };
 
 #endif

@@ -13,6 +13,11 @@ public:
   // Объекты:
   XMLDataBase *db = nullptr;
   QSettings *st = nullptr;
+  // Константы:
+  const QString wordPath = "wordPath";
+  const QString excelPath = "excelPath";
+  const QString pptPath = "pptPath";
+  const QString visioPath = "visioPath";
 
 private:
   // Методы:

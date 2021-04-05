@@ -58,7 +58,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   glt->addWidget(ppBtn, 2, 1);
   // 4
   auto *visioLbl = new QLabel(this);
-  visioLbl->setText("Путь до Microsoft PowerPoint:");
+  visioLbl->setText("Путь до Microsoft Visio (необязательно):");
   visioLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(visioLbl, 3, 0);
   visioBtn = new QPushButton(this);
@@ -66,7 +66,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   connect(visioBtn, &QPushButton::clicked, this,
           &FirstTimeSetupDialog::updateAcceptEnabled);
   connect(visioBtn, &QPushButton::clicked, this, [this]() {
-    MSVisio = getPath(DocumentType::MSPowerPoint);
+    MSVisio = getPath(DocumentType::MSVisio);
     visioBtn->setText(
         QFontMetrics(visioBtn->font())
             .elidedText(MSVisio, Qt::ElideLeft, visioBtn->width()));
@@ -112,4 +112,10 @@ QString FirstTimeSetupDialog::getPath(DocumentType docType) {
   return QFileDialog::getOpenFileName(this, "Открыть программу", "", fileExt);
 }
 
-void FirstTimeSetupDialog::saveAll() {}
+void FirstTimeSetupDialog::saveAll() {
+  data->st->setValue(data->wordPath, MSWord);
+  data->st->setValue(data->excelPath, MSExcel);
+  data->st->setValue(data->pptPath, MSPP);
+  data->st->setValue(data->visioPath, MSVisio);
+  close();
+}

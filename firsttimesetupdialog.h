@@ -20,7 +20,7 @@ public:
 
 private:
   // Константы:
-  QString noPath = "(не указан)";
+  const QString noPath = "(не указан)";
   // Объекты:
   Data *data = nullptr;
   QString MSWord;

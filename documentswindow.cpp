@@ -5,7 +5,10 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
   resize(1000, 560);
   data = new Data(this);
-  if (data->st->value("notFirstTime") != "not first time") {
+  if ((data->st->value("notFirstTime") != "not first time") or
+      (not data->st->value(data->wordPath).toString().toLower().contains("exe") and
+       not data->st->value(data->excelPath).toString().toLower().contains("exe") and
+       not data->st->value(data->pptPath).toString().toLower().contains("exe"))) {
     (new FirstTimeSetupDialog(data, this))->exec();
     data->st->setValue("notFirstTime", "not first time");
   }
@@ -25,19 +28,25 @@ void DocumentsWindow::drawNode() {
     bottomToolBar = getBottomToolBar();
   }
   cw = new QWidget(this);
-  auto *clt = new QVBoxLayout();
-  clt->addWidget(navBar);
-  auto *nodes = new NodesCollection(brick->brickNodes, cw);
-  clt->addWidget(nodes);
+  auto *lt = new QVBoxLayout();
+  lt->addWidget(navBar);
   auto *sa = new QScrollArea(cw);
+  sa->setWidgetResizable(true);
+  sa->setFrameShape(QFrame::NoFrame);
+  sa->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  auto *dw = new QWidget(sa);
   docsLt = new QVBoxLayout();
+  auto *nodes = new NodesCollection(brick->brickNodes, cw);
+  docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments)
     docsLt->addWidget(new DocumentWidget(doc, data, sa));
-  sa->setLayout(docsLt);
-  clt->addWidget(sa);
+  docsLt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
+  dw->setLayout(docsLt);
+  sa->setWidget(dw);
+  lt->addWidget(sa);
   if (brick != data->db->getArchiveDataBrick())
-    clt->addWidget(bottomToolBar);
-  cw->setLayout(clt);
+    lt->addWidget(bottomToolBar);
+  cw->setLayout(lt);
   setCentralWidget(cw);
 }
 
@@ -130,7 +139,8 @@ void DocumentsWindow::goArchive() {
 
 void DocumentsWindow::addNode() {
   auto *addNodeDialog = new AddNodeDialog(data, this);
-  connect(addNodeDialog, &AddNodeDialog::sendResult, this, &DocumentsWindow::processNode);
+  connect(addNodeDialog, &AddNodeDialog::sendResult, this,
+          &DocumentsWindow::processNode);
   addNodeDialog->show();
 }
 
@@ -140,4 +150,15 @@ void DocumentsWindow::processNode(DataBrick *dataBrick) {
   drawNode();
 }
 
-void DocumentsWindow::addDocument() {}
+void DocumentsWindow::addDocument() {
+  auto *addDocumentDialog = new AddDocumentDialog(this);
+  connect(addDocumentDialog, &AddDocumentDialog::sendResult, this,
+          &DocumentsWindow::processDocument);
+  addDocumentDialog->show();
+}
+
+void DocumentsWindow::processDocument(Document *document) {
+  DataBrick *curr = history.last();
+  curr->brickDocuments.append(document);
+  drawNode();
+}

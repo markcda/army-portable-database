@@ -26,6 +26,8 @@ AddNodeDialog::AddNodeDialog(Data *_data, QWidget *parent) : QDialog(parent) {
   auto *okBtn = new QPushButton(this);
   okBtn->setText("Добавить");
   connect(okBtn, &QPushButton::clicked, this, [this]() {
+    if (nodeNameLine->text().isEmpty())
+      return;
     emit sendResult(getDataBrick());
     close();
   });

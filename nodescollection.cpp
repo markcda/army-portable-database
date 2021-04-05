@@ -9,6 +9,7 @@ NodesCollection::NodesCollection(QList<DataBrick *> dataBricks, QWidget *parent)
   } else {
     for (i = 0; i < dataBricks.length(); i++) {
       auto *dbw = new DataBrickWidget(dataBricks.at(i), this);
+      connect(dbw, &DataBrickWidget::openDataBrick, this, &NodesCollection::openDataBrick);
       dbw->setStyleSheet(
           "#" + DBW_OBJNAME + " { " + NC_BORDER + "border-color: rgb(" +
           QString::number(dataBricks.at(i)->brickColor.red()) + ", " +

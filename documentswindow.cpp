@@ -16,6 +16,11 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   drawNode();
 }
 
+DocumentsWindow::~DocumentsWindow() {
+  data->db->generateData();
+  data->db->syncDataBase();
+}
+
 void DocumentsWindow::drawNode() {
   auto *brick = history.last();
   setWindowTitle(brick->name);
@@ -37,6 +42,7 @@ void DocumentsWindow::drawNode() {
   auto *dw = new QWidget(sa);
   docsLt = new QVBoxLayout();
   auto *nodes = new NodesCollection(brick->brickNodes, cw);
+  connect(nodes, &NodesCollection::openDataBrick, this, &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments)
     docsLt->addWidget(new DocumentWidget(doc, data, sa));
@@ -160,5 +166,10 @@ void DocumentsWindow::addDocument() {
 void DocumentsWindow::processDocument(Document *document) {
   DataBrick *curr = history.last();
   curr->brickDocuments.append(document);
+  drawNode();
+}
+
+void DocumentsWindow::goNode(DataBrick *dataBrick) {
+  history.append(dataBrick);
   drawNode();
 }

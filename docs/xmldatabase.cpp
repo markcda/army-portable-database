@@ -15,7 +15,6 @@ XMLDataBase::XMLDataBase(QString directoryPath) {
 }
 
 XMLDataBase::~XMLDataBase() {
-  syncDataBase();
   delete xmlDataBase;
   destroyDataBrick(rootDataBrick);
   destroyDataBrick(archiveDataBrick);
@@ -85,8 +84,8 @@ void XMLDataBase::syncDataBase() {
 void XMLDataBase::generateData() {
   auto *newXmlDataBase = new QDomDocument(DATABASE_DOCTYPE);
   auto nodes = newXmlDataBase->createElement(DATABASE_NODES_TAGNAME);
-  nodes.appendChild(generateDomElementFromDataBrick(rootDataBrick));
-  nodes.appendChild(generateDomElementFromDataBrick(archiveDataBrick));
+  nodes.appendChild(generateDomElementFromDataBrick(newXmlDataBase, rootDataBrick));
+  nodes.appendChild(generateDomElementFromDataBrick(newXmlDataBase, archiveDataBrick));
   newXmlDataBase->appendChild(nodes);
   if (xmlDataBase)
     delete xmlDataBase;
@@ -144,21 +143,24 @@ Document *XMLDataBase::generateDocumentFromDomElement(QDomElement element) {
       element.attribute(DATABASE_DOCATTR_EXPIRES).toInt();
   document->expiringDateTime = QDateTime::fromSecsSinceEpoch(
       element.attribute(DATABASE_DOCATTR_EXPIREDATETIME).toInt());
+  document->backgroundColor = QColor::fromRgb(
+        element.attribute(DATABASE_DOCATTR_COLOR).toUInt());
+  document->textColor =
+      QColor::fromRgb(
+        element.attribute(DATABASE_DOCATTR_TEXTCOLOR).toUInt());
   return document;
 }
 
-QDomElement XMLDataBase::generateDomElementFromDataBrick(DataBrick *dataBrick) {
-  QDomElement current;
-  current.setTagName(DATABASE_NODE_TAGNAME);
+QDomElement XMLDataBase::generateDomElementFromDataBrick(QDomDocument *domDocument, DataBrick *dataBrick) {
+  QDomElement current = domDocument->createElement(DATABASE_NODE_TAGNAME);
   current.setAttribute(DATABASE_NODEATTR_NAME, dataBrick->name);
   current.setAttribute(DATABASE_NODEATTR_UUID, dataBrick->brickUUID.toString());
   current.setAttribute(DATABASE_NODEATTR_COLOR, dataBrick->brickColor.rgb());
   current.setAttribute(DATABASE_NODEATTR_TEXTCOLOR, dataBrick->textColor.rgb());
   for (auto *childDataBrick : dataBrick->brickNodes)
-    current.appendChild(generateDomElementFromDataBrick(childDataBrick));
+    current.appendChild(generateDomElementFromDataBrick(domDocument, childDataBrick));
   for (auto *document : dataBrick->brickDocuments) {
-    QDomElement documentDomElement;
-    documentDomElement.setTagName(DATABASE_DOCUMENT_TAGNAME);
+    QDomElement documentDomElement = domDocument->createElement(DATABASE_DOCUMENT_TAGNAME);
     documentDomElement.setAttribute(DATABASE_DOCATTR_NAME, document->name);
     documentDomElement.setAttribute(DATABASE_DOCATTR_FILEPATH,
                                     document->filePath);
@@ -170,6 +172,10 @@ QDomElement XMLDataBase::generateDomElementFromDataBrick(DataBrick *dataBrick) {
     documentDomElement.setAttribute(
         DATABASE_DOCATTR_EXPIREDATETIME,
         document->expiringDateTime.toSecsSinceEpoch());
+    documentDomElement.setAttribute(DATABASE_DOCATTR_COLOR,
+                                    document->backgroundColor.rgb());
+    documentDomElement.setAttribute(DATABASE_DOCATTR_TEXTCOLOR,
+                                    document->textColor.rgb());
     current.appendChild(documentDomElement);
   }
   return current;

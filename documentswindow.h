@@ -23,6 +23,7 @@ class DocumentsWindow : public QMainWindow {
 public:
   // Конструкторы:
   DocumentsWindow(QWidget *parent = nullptr);
+  ~DocumentsWindow();
 
 private:
   // Константы:
@@ -45,6 +46,7 @@ private:
   void goBack();
   void goFirst();
   void goArchive();
+  void goNode(DataBrick *dataBrick);
   void addNode();
   void addDocument();
   void processNode(DataBrick *dataBrick);

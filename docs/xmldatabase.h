@@ -23,6 +23,8 @@ public:
   static void createXMLDataBase(QString directoryPath);
   DataBrick *getRootDataBrick();
   DataBrick *getArchiveDataBrick();
+  void syncDataBase();
+  void generateData();
 
   //Статические методы:
   static QUuid generateUUID();
@@ -46,6 +48,8 @@ private:
   inline static const QString DATABASE_DOCATTR_ADDDATETIME = "from";
   inline static const QString DATABASE_DOCATTR_EXPIRES = "expires";
   inline static const QString DATABASE_DOCATTR_EXPIREDATETIME = "to";
+  inline static const QString DATABASE_DOCATTR_COLOR = "color";
+  inline static const QString DATABASE_DOCATTR_TEXTCOLOR = "text-color";
 
   // Статические методы:
   static QDomElement createRootElement(QDomDocument *doc,
@@ -61,10 +65,8 @@ private:
   DataBrick *archiveDataBrick = nullptr;
 
   // Методы:
-  void syncDataBase();
-  void generateData();
   void loadData();
-  QDomElement generateDomElementFromDataBrick(DataBrick *dataBrick);
+  QDomElement generateDomElementFromDataBrick(QDomDocument *domDocument, DataBrick *dataBrick);
   DataBrick *generateDataBrickFromDomElement(QDomElement element);
   Document *generateDocumentFromDomElement(QDomElement element);
   void destroyDataBrick(DataBrick *dataBrick);

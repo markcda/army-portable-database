@@ -1,4 +1,6 @@
 #include "documentwidget.h"
+#include <iostream>
+#include <QDebug>
 
 DocumentWidget::DocumentWidget(Document *_document, Data *_data,
                                QWidget *parent)
@@ -20,6 +22,7 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
   font.setBold(true);
   lbl->setFont(font);
   lbl->setText(document->name);
+  lbl->setIndent(10);
   lbl->setObjectName(DW_OBJNAME);
   lbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
   lt->addWidget(lbl);
@@ -31,16 +34,19 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
           &DocumentWidget::openDocumentInApp);
   lt->addWidget(openBtn);
   auto *renameBtn = new QToolButton(this);
+  renameBtn->setEnabled(false);
   renameBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   renameBtn->setIcon(QIcon(":/arts/16/edit.svg"));
   renameBtn->setText("Изменить");
   lt->addWidget(renameBtn);
   auto *archiveBtn = new QToolButton(this);
+  archiveBtn->setEnabled(false);
   archiveBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   archiveBtn->setIcon(QIcon(":/arts/16/archive.svg"));
   archiveBtn->setText("В архив");
   lt->addWidget(archiveBtn);
   auto *removeBtn = new QToolButton(this);
+  removeBtn->setEnabled(false);
   removeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   removeBtn->setIcon(QIcon(":/arts/16/edit-delete.svg"));
   removeBtn->setText("Удалить");
@@ -51,16 +57,19 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
 
 void DocumentWidget::openDocumentInApp() {
   QStringList args;
-  args << "/f" << document->filePath;
+  QString path = document->filePath.replace("/", "\\");
+  auto *process = new QProcess(parent());
+  process->setNativeArguments("/f \"" + path + "\"");
   if (document->filePath.toLower().endsWith(".doc") or
       document->filePath.toLower().endsWith(".docx"))
-    QProcess().start(data->st->value(data->wordPath).toString(), args);
+    process->setProgram(data->st->value(data->wordPath).toString());
   else if (document->filePath.toLower().endsWith(".xls") or
            document->filePath.toLower().endsWith(".xlsx"))
-    QProcess().start(data->st->value(data->excelPath).toString(), args);
+    process->setProgram(data->st->value(data->excelPath).toString());
   else if (document->filePath.toLower().endsWith(".ppt") or
            document->filePath.toLower().endsWith(".pptx"))
-    QProcess().start(data->st->value(data->pptPath).toString(), args);
+    process->setProgram(data->st->value(data->pptPath).toString());
   else if (document->filePath.toLower().endsWith(".vsd"))
-    QProcess().start(data->st->value(data->visioPath).toString(), args);
+    process->setProgram(data->st->value(data->visioPath).toString());
+  process->start();
 }

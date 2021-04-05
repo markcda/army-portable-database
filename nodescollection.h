@@ -7,9 +7,13 @@
 #include <QWidget>
 
 class NodesCollection : public QWidget {
+  Q_OBJECT
 public:
   // Конструкторы:
   NodesCollection(QList<DataBrick *> dataBricks, QWidget *parent = nullptr);
+
+signals:
+  DataBrick *openDataBrick(DataBrick *dataBrick);
 
 private:
   // Константы:

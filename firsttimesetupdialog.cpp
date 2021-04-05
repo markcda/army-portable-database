@@ -17,12 +17,11 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   glt->addWidget(wordLbl, 0, 0);
   wordBtn = new QPushButton(this);
   wordBtn->setText(noPath);
-  connect(wordBtn, &QPushButton::clicked, this,
-          &FirstTimeSetupDialog::updateAcceptEnabled);
   connect(wordBtn, &QPushButton::clicked, this, [this]() {
     MSWord = getPath(DocumentType::MSWord);
     wordBtn->setText(QFontMetrics(wordBtn->font())
                          .elidedText(MSWord, Qt::ElideLeft, wordBtn->width()));
+    updateAcceptEnabled();
   });
   glt->addWidget(wordBtn, 0, 1);
   // 2
@@ -32,13 +31,12 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   glt->addWidget(excelLbl, 1, 0);
   excelBtn = new QPushButton(this);
   excelBtn->setText(noPath);
-  connect(excelBtn, &QPushButton::clicked, this,
-          &FirstTimeSetupDialog::updateAcceptEnabled);
   connect(excelBtn, &QPushButton::clicked, this, [this]() {
     MSExcel = getPath(DocumentType::MSExcel);
     excelBtn->setText(
         QFontMetrics(excelBtn->font())
             .elidedText(MSExcel, Qt::ElideLeft, excelBtn->width()));
+    updateAcceptEnabled();
   });
   glt->addWidget(excelBtn, 1, 1);
   // 3
@@ -48,12 +46,11 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   glt->addWidget(ppLbl, 2, 0);
   ppBtn = new QPushButton(this);
   ppBtn->setText(noPath);
-  connect(ppBtn, &QPushButton::clicked, this,
-          &FirstTimeSetupDialog::updateAcceptEnabled);
   connect(ppBtn, &QPushButton::clicked, this, [this]() {
     MSPP = getPath(DocumentType::MSPowerPoint);
     ppBtn->setText(QFontMetrics(ppBtn->font())
                        .elidedText(MSPP, Qt::ElideLeft, ppBtn->width()));
+    updateAcceptEnabled();
   });
   glt->addWidget(ppBtn, 2, 1);
   // 4
@@ -63,8 +60,6 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   glt->addWidget(visioLbl, 3, 0);
   visioBtn = new QPushButton(this);
   visioBtn->setText(noPath);
-  connect(visioBtn, &QPushButton::clicked, this,
-          &FirstTimeSetupDialog::updateAcceptEnabled);
   connect(visioBtn, &QPushButton::clicked, this, [this]() {
     MSVisio = getPath(DocumentType::MSVisio);
     visioBtn->setText(

@@ -31,6 +31,7 @@ private:
   const QString excelPath = "excelPath";
   const QString pptPath = "pptPath";
   const QString visioPath = "visioPath";
+  const QString libreOfficePath = "/usr/bin/libreoffice";
   // Объекты:
   Data *data = nullptr;
   QList<DataBrick *> history;
@@ -51,5 +52,6 @@ private:
   void addDocument();
   void processNode(DataBrick *dataBrick);
   void processDocument(Document *doc);
+  void removeDocument(Document *doc);
 };
 #endif

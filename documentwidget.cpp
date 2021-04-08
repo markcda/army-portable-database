@@ -1,6 +1,6 @@
 #include "documentwidget.h"
-#include <iostream>
 #include <QDebug>
+#include <iostream>
 
 DocumentWidget::DocumentWidget(Document *_document, Data *_data,
                                QWidget *parent)
@@ -46,20 +46,17 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
   archiveBtn->setText("В архив");
   lt->addWidget(archiveBtn);
   auto *removeBtn = new QToolButton(this);
-  removeBtn->setEnabled(false);
   removeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   removeBtn->setIcon(QIcon(":/arts/16/edit-delete.svg"));
   removeBtn->setText("Удалить");
-  connect(removeBtn, &QToolButton::clicked, this, [this]() { emit removed(); });
+  connect(removeBtn, &QToolButton::clicked, this, [this]() { emit removed(document); });
   lt->addWidget(removeBtn);
   setLayout(lt);
 }
 
 void DocumentWidget::openDocumentInApp() {
   QStringList args;
-  QString path = document->filePath.replace("/", "\\");
   auto *process = new QProcess(parent());
-  process->setNativeArguments("/f \"" + path + "\"");
   if (document->filePath.toLower().endsWith(".doc") or
       document->filePath.toLower().endsWith(".docx"))
     process->setProgram(data->st->value(data->wordPath).toString());
@@ -71,5 +68,11 @@ void DocumentWidget::openDocumentInApp() {
     process->setProgram(data->st->value(data->pptPath).toString());
   else if (document->filePath.toLower().endsWith(".vsd"))
     process->setProgram(data->st->value(data->visioPath).toString());
+#ifdef Q_OS_WINDOWS
+  QString path = document->filePath.replace("/", "\\");
+  process->setNativeArguments("/f \"" + path + "\"");
+#else
+  process->setArguments({document->filePath});
+#endif
   process->start();
 }

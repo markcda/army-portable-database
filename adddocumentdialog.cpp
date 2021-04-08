@@ -57,6 +57,8 @@ void AddDocumentDialog::selectFile() {
       "Документы MS Office (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd)");
   pathBtn->setText(QFontMetrics(pathBtn->font())
                        .elidedText(docPath, Qt::ElideLeft, pathBtn->width()));
+  if (nameLine->text().isEmpty())
+    nameLine->setText(docPath.split("/").last().split(".").first());
 }
 
 Document *AddDocumentDialog::getDocument() {

@@ -3,8 +3,7 @@
 
 XMLDataBase::XMLDataBase(QString directoryPath) {
   dbDirectory = directoryPath;
-  QDir::setCurrent(dbDirectory);
-  QFile xmlDataBaseFile(DATABASE_FILENAME);
+  QFile xmlDataBaseFile(dbDirectory + QDir::separator() + DATABASE_FILENAME);
   if (not xmlDataBaseFile.exists())
     XMLDataBase::createXMLDataBase(dbDirectory);
   xmlDataBaseFile.open(QIODevice::ReadOnly);
@@ -29,8 +28,7 @@ void XMLDataBase::createXMLDataBase(QString directoryPath) {
   nodes.appendChild(archive);
   xmlDataBase.appendChild(nodes);
   // Запись в файл:
-  QDir::setCurrent(directoryPath);
-  QFile xmlDataBaseFile(DATABASE_FILENAME);
+  QFile xmlDataBaseFile(directoryPath + QDir::separator() + DATABASE_FILENAME);
   xmlDataBaseFile.open(QIODevice::WriteOnly);
   xmlDataBaseFile.write(xmlDataBase.toByteArray());
   xmlDataBaseFile.close();

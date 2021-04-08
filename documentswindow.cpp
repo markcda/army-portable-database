@@ -5,6 +5,7 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
   resize(1000, 560);
   data = new Data(this);
+#ifdef Q_OS_WINDOWS
   if ((data->st->value("notFirstTime") != "not first time") or
       (not data->st->value(data->wordPath).toString().toLower().contains("exe") and
        not data->st->value(data->excelPath).toString().toLower().contains("exe") and
@@ -12,6 +13,14 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
     (new FirstTimeSetupDialog(data, this))->exec();
     data->st->setValue("notFirstTime", "not first time");
   }
+#else
+  if (data->st->value("notFirstTime") != "not first time") {
+    data->st->setValue("notFirstTime", "not first time");
+    data->st->setValue(data->wordPath, libreOfficePath);
+    data->st->setValue(data->excelPath, libreOfficePath);
+    data->st->setValue(data->pptPath, libreOfficePath);
+  }
+#endif
   history.append(data->db->getRootDataBrick());
   drawNode();
 }
@@ -44,8 +53,11 @@ void DocumentsWindow::drawNode() {
   auto *nodes = new NodesCollection(brick->brickNodes, cw);
   connect(nodes, &NodesCollection::openDataBrick, this, &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
-  for (auto *doc : brick->brickDocuments)
-    docsLt->addWidget(new DocumentWidget(doc, data, sa));
+  for (auto *doc : brick->brickDocuments) {
+    auto *d = new DocumentWidget(doc, data, sa);
+    connect(d, &DocumentWidget::removed, this, &DocumentsWindow::removeDocument);
+    docsLt->addWidget(d);
+  }
   docsLt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
   dw->setLayout(docsLt);
   sa->setWidget(dw);
@@ -171,5 +183,16 @@ void DocumentsWindow::processDocument(Document *document) {
 
 void DocumentsWindow::goNode(DataBrick *dataBrick) {
   history.append(dataBrick);
+  drawNode();
+}
+
+void DocumentsWindow::removeDocument(Document *doc) {
+  DataBrick *curr = history.last();
+  for (int i = 0; i < curr->brickDocuments.length(); i++) {
+    if (curr->brickDocuments.at(i) == doc) {
+      curr->brickDocuments.removeAt(i);
+      break;
+    }
+  }
   drawNode();
 }

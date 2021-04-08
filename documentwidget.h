@@ -16,7 +16,7 @@ public:
   DocumentWidget(Document *_document, Data *_data, QWidget *parent = nullptr);
 
 signals:
-  void removed();
+  Document *removed(Document *document);
 
 private:
   Document *document = nullptr;

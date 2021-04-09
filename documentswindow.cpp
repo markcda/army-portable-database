@@ -33,18 +33,17 @@ DocumentsWindow::~DocumentsWindow() {
 void DocumentsWindow::drawNode() {
   auto *brick = history.last();
   setWindowTitle(brick->name);
+  setUpdatesEnabled(false);
+  int scrollPercentage = 0;
+  if (sa)
+    scrollPercentage = sa->verticalScrollBar()->value();
   if (cw)
     delete cw;
-  if (brick == data->db->getArchiveDataBrick())
-    navBar = getArchiveNavBar();
-  else {
-    navBar = getNavBar();
-    bottomToolBar = getBottomToolBar();
-  }
+  navBar = getNavBar();
   cw = new QWidget(this);
   auto *lt = new QVBoxLayout();
   lt->addWidget(navBar);
-  auto *sa = new QScrollArea(cw);
+  sa = new QScrollArea(cw);
   sa->setWidgetResizable(true);
   sa->setFrameShape(QFrame::NoFrame);
   sa->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -56,16 +55,21 @@ void DocumentsWindow::drawNode() {
   for (auto *doc : brick->brickDocuments) {
     auto *d = new DocumentWidget(doc, data, sa);
     connect(d, &DocumentWidget::removed, this, &DocumentsWindow::removeDocument);
+    connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
     docsLt->addWidget(d);
   }
   docsLt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
   dw->setLayout(docsLt);
   sa->setWidget(dw);
   lt->addWidget(sa);
-  if (brick != data->db->getArchiveDataBrick())
+  if (brick != data->db->getArchiveDataBrick()) {
+    bottomToolBar = getBottomToolBar();
     lt->addWidget(bottomToolBar);
+  }
   cw->setLayout(lt);
   setCentralWidget(cw);
+  sa->verticalScrollBar()->setValue(scrollPercentage);
+  setUpdatesEnabled(true);
 }
 
 QWidget *DocumentsWindow::getNavBar() {
@@ -96,26 +100,6 @@ QWidget *DocumentsWindow::getNavBar() {
   archiveBtn->setText("Архив");
   connect(archiveBtn, &QToolButton::clicked, this, &DocumentsWindow::goArchive);
   lt->addWidget(archiveBtn);
-  w->setLayout(lt);
-  return w;
-}
-
-QWidget *DocumentsWindow::getArchiveNavBar() {
-  auto *w = new QWidget(this);
-  auto *lt = new QHBoxLayout();
-  auto *backBtn = new QToolButton(this);
-  backBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  backBtn->setArrowType(Qt::LeftArrow);
-  backBtn->setText("Назад");
-  connect(backBtn, &QToolButton::clicked, this, &DocumentsWindow::goBack);
-  lt->addWidget(backBtn);
-  auto *lbl = new QLabel(this);
-  QFont font;
-  font.setBold(true);
-  font.setPixelSize(18);
-  lbl->setFont(font);
-  lbl->setText("Архив");
-  lt->addWidget(lbl);
   w->setLayout(lt);
   return w;
 }

@@ -1,6 +1,4 @@
 #include "documentwidget.h"
-#include <QDebug>
-#include <iostream>
 
 DocumentWidget::DocumentWidget(Document *_document, Data *_data,
                                QWidget *parent)
@@ -33,12 +31,12 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
   connect(openBtn, &QToolButton::clicked, this,
           &DocumentWidget::openDocumentInApp);
   lt->addWidget(openBtn);
-  auto *renameBtn = new QToolButton(this);
-  renameBtn->setEnabled(false);
-  renameBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  renameBtn->setIcon(QIcon(":/arts/16/edit.svg"));
-  renameBtn->setText("Изменить");
-  lt->addWidget(renameBtn);
+  auto *editBtn = new QToolButton(this);
+  editBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  editBtn->setIcon(QIcon(":/arts/16/edit.svg"));
+  editBtn->setText("Изменить");
+  connect(editBtn, &QToolButton::clicked, this, &DocumentWidget::editDocument);
+  lt->addWidget(editBtn);
   auto *archiveBtn = new QToolButton(this);
   archiveBtn->setEnabled(false);
   archiveBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -75,4 +73,10 @@ void DocumentWidget::openDocumentInApp() {
   process->setArguments({document->filePath});
 #endif
   process->start();
+}
+
+void DocumentWidget::editDocument() {
+  auto *editDialog = new EditDocumentDialog(document, this);
+  editDialog->exec();
+  emit edited();
 }

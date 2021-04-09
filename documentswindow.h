@@ -14,6 +14,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSpacerItem>
 #include <QToolButton>
 #include <QWidget>
@@ -38,6 +39,7 @@ private:
   QWidget *navBar = nullptr;
   QWidget *bottomToolBar = nullptr;
   QWidget *cw = nullptr;
+  QScrollArea *sa = nullptr;
   QVBoxLayout *docsLt = nullptr;
   // Методы:
   void drawNode();

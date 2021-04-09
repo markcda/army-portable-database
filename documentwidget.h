@@ -3,6 +3,7 @@
 
 #include "data.h"
 #include "docs/document.h"
+#include "editdocumentdialog.h"
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -17,11 +18,13 @@ public:
 
 signals:
   Document *removed(Document *document);
+  void edited();
 
 private:
   Document *document = nullptr;
   Data *data = nullptr;
   void openDocumentInApp();
+  void editDocument();
   const QString DW_OBJNAME = "document";
 };
 

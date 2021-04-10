@@ -5,7 +5,9 @@
 #include "addnodedialog.h"
 #include "data.h"
 #include "documentwidget.h"
+#include "editnodedialog.h"
 #include "firsttimesetupdialog.h"
+#include "navbar.h"
 #include "nodescollection.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -36,21 +38,19 @@ private:
   // Объекты:
   Data *data = nullptr;
   QList<DataBrick *> history;
-  QWidget *navBar = nullptr;
+  QVBoxLayout *mainLt = nullptr;
+  NavBar *navBar = nullptr;
   QWidget *bottomToolBar = nullptr;
-  QWidget *cw = nullptr;
   QScrollArea *sa = nullptr;
-  QVBoxLayout *docsLt = nullptr;
   // Методы:
   void drawNode();
-  QWidget *getNavBar();
-  QWidget *getArchiveNavBar();
   QWidget *getBottomToolBar();
   void goBack();
   void goFirst();
   void goArchive();
   void goNode(DataBrick *dataBrick);
   void addNode();
+  void editNode();
   void addDocument();
   void processNode(DataBrick *dataBrick);
   void processDocument(Document *doc);

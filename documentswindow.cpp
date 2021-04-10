@@ -7,9 +7,18 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   data = new Data(this);
 #ifdef Q_OS_WINDOWS
   if ((data->st->value("notFirstTime") != "not first time") or
-      (not data->st->value(data->wordPath).toString().toLower().contains("exe") and
-       not data->st->value(data->excelPath).toString().toLower().contains("exe") and
-       not data->st->value(data->pptPath).toString().toLower().contains("exe"))) {
+      (not data->st->value(data->wordPath)
+               .toString()
+               .toLower()
+               .contains("exe") and
+       not data->st->value(data->excelPath)
+               .toString()
+               .toLower()
+               .contains("exe") and
+       not data->st->value(data->pptPath)
+               .toString()
+               .toLower()
+               .contains("exe"))) {
     (new FirstTimeSetupDialog(data, this))->exec();
     data->st->setValue("notFirstTime", "not first time");
   }
@@ -22,6 +31,24 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   }
 #endif
   history.append(data->db->getRootDataBrick());
+  auto *cw = new QWidget(this);
+  mainLt = new QVBoxLayout();
+  navBar = new NavBar();
+  connect(navBar->backBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::goBack);
+  connect(navBar->mainBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::goFirst);
+  connect(navBar->archiveBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::goArchive);
+  connect(navBar->editNodeBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::editNode);
+  mainLt->addWidget(navBar);
+  sa = new QScrollArea(cw);
+  mainLt->addWidget(sa);
+  bottomToolBar = getBottomToolBar();
+  mainLt->addWidget(bottomToolBar);
+  cw->setLayout(mainLt);
+  setCentralWidget(cw);
   drawNode();
 }
 
@@ -31,77 +58,42 @@ DocumentsWindow::~DocumentsWindow() {
 }
 
 void DocumentsWindow::drawNode() {
+  auto *nsa = new QScrollArea(this);
   auto *brick = history.last();
   setWindowTitle(brick->name);
   setUpdatesEnabled(false);
   int scrollPercentage = 0;
   if (sa)
     scrollPercentage = sa->verticalScrollBar()->value();
-  if (cw)
-    delete cw;
-  navBar = getNavBar();
-  cw = new QWidget(this);
-  auto *lt = new QVBoxLayout();
-  lt->addWidget(navBar);
-  sa = new QScrollArea(cw);
-  sa->setWidgetResizable(true);
-  sa->setFrameShape(QFrame::NoFrame);
-  sa->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  auto *dw = new QWidget(sa);
-  docsLt = new QVBoxLayout();
-  auto *nodes = new NodesCollection(brick->brickNodes, cw);
-  connect(nodes, &NodesCollection::openDataBrick, this, &DocumentsWindow::goNode);
+  navBar->update(history.length(), data->db, brick);
+  navBar->lbl->setText(brick->name);
+  bottomToolBar->setHidden(brick == data->db->getArchiveDataBrick());
+  nsa->setWidgetResizable(true);
+  nsa->setFrameShape(QFrame::NoFrame);
+  nsa->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  auto *dw = new QWidget(nsa);
+  auto *docsLt = new QVBoxLayout();
+  auto *nodes = new NodesCollection(brick->brickNodes, this);
+  connect(nodes, &NodesCollection::openDataBrick, this,
+          &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments) {
-    auto *d = new DocumentWidget(doc, data, sa);
-    connect(d, &DocumentWidget::removed, this, &DocumentsWindow::removeDocument);
+    auto *d = new DocumentWidget(doc, data, nsa);
+    connect(d, &DocumentWidget::removed, this,
+            &DocumentsWindow::removeDocument);
     connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
     docsLt->addWidget(d);
   }
-  docsLt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
+  docsLt->addItem(
+      new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
   dw->setLayout(docsLt);
-  sa->setWidget(dw);
-  lt->addWidget(sa);
-  if (brick != data->db->getArchiveDataBrick()) {
-    bottomToolBar = getBottomToolBar();
-    lt->addWidget(bottomToolBar);
-  }
-  cw->setLayout(lt);
-  setCentralWidget(cw);
-  sa->verticalScrollBar()->setValue(scrollPercentage);
+  nsa->setWidget(dw);
+  mainLt->replaceWidget(sa, nsa);
+  nsa->verticalScrollBar()->setValue(scrollPercentage);
+  if (sa)
+    delete sa;
+  sa = nsa;
   setUpdatesEnabled(true);
-}
-
-QWidget *DocumentsWindow::getNavBar() {
-  auto *w = new QWidget(this);
-  auto *lt = new QHBoxLayout();
-  if (history.length() > 1) {
-    auto *backBtn = new QToolButton(this);
-    backBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    backBtn->setArrowType(Qt::LeftArrow);
-    backBtn->setText("Назад");
-    connect(backBtn, &QToolButton::clicked, this, &DocumentsWindow::goBack);
-    lt->addWidget(backBtn);
-  }
-  if (history.length() > 2) {
-    auto *mainBtn = new QToolButton(this);
-    mainBtn->setText("На главную");
-    connect(mainBtn, &QToolButton::clicked, this, &DocumentsWindow::goFirst);
-    lt->addWidget(mainBtn);
-  }
-  auto *lbl = new QLabel(this);
-  QFont font;
-  font.setBold(true);
-  font.setPixelSize(18);
-  lbl->setFont(font);
-  lbl->setText(history.last()->name);
-  lt->addWidget(lbl);
-  auto *archiveBtn = new QToolButton(this);
-  archiveBtn->setText("Архив");
-  connect(archiveBtn, &QToolButton::clicked, this, &DocumentsWindow::goArchive);
-  lt->addWidget(archiveBtn);
-  w->setLayout(lt);
-  return w;
 }
 
 QWidget *DocumentsWindow::getBottomToolBar() {
@@ -144,6 +136,12 @@ void DocumentsWindow::addNode() {
   connect(addNodeDialog, &AddNodeDialog::sendResult, this,
           &DocumentsWindow::processNode);
   addNodeDialog->show();
+}
+
+void DocumentsWindow::editNode() {
+  auto *editNode = new EditNodeDialog(history.last(), this);
+  editNode->exec();
+  drawNode();
 }
 
 void DocumentsWindow::processNode(DataBrick *dataBrick) {

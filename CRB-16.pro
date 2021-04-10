@@ -8,6 +8,7 @@ SOURCES += \
     docs/xmldatabase.cpp \
     documentwidget.cpp \
     editdocumentdialog.cpp \
+    editnodedialog.cpp \
     ex/exporter.cpp \
     firsttimesetupdialog.cpp \
     main.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     documentswindow.h \
     documentwidget.h \
     editdocumentdialog.h \
+    editnodedialog.h \
     ex/exporter.h \
     firsttimesetupdialog.h \
     navbar.h \

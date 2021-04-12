@@ -19,7 +19,7 @@ DataBrickWidget::DataBrickWidget(DataBrick *_dataBrick, QWidget *parent)
           [this]() { emit openDataBrick(dataBrick); });
   lt->addWidget(lbl);
   setLayout(lt);
-  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 }
 
 void DataBrickWidget::mouseReleaseEvent(QMouseEvent *e) {

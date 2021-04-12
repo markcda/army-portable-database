@@ -40,8 +40,12 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
           &DocumentsWindow::goFirst);
   connect(navBar->archiveBtn, &QToolButton::clicked, this,
           &DocumentsWindow::goArchive);
-  connect(navBar->editNodeBtn, &QToolButton::clicked, this,
+  connect(navBar->editNode, &QAction::triggered, this,
           &DocumentsWindow::editNode);
+  connect(navBar->moveNode, &QAction::triggered, this,
+          &DocumentsWindow::moveNode);
+  connect(navBar->removeNodeBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::removeNode);
   mainLt->addWidget(navBar);
   sa = new QScrollArea(cw);
   mainLt->addWidget(sa);
@@ -78,7 +82,7 @@ void DocumentsWindow::drawNode() {
           &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments) {
-    auto *d = new DocumentWidget(doc, data, nsa);
+    auto *d = new DocumentWidget(doc, brick, data, nsa);
     connect(d, &DocumentWidget::removed, this,
             &DocumentsWindow::removeDocument);
     connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
@@ -144,9 +148,31 @@ void DocumentsWindow::editNode() {
   drawNode();
 }
 
+void DocumentsWindow::moveNode() {
+  auto *moveNode =
+      new MoveDialog(data, history.last(), history.last()->parent, this);
+  moveNode->exec();
+  drawNode();
+}
+
+void DocumentsWindow::removeNode() {
+  auto *node = history.last();
+  auto *parentBrick = node->parent;
+  for (int i = 0; i < parentBrick->brickNodes.length(); i++)
+    if (parentBrick->brickNodes.at(i) == node) {
+      parentBrick->brickNodes.removeAt(i);
+      break;
+    }
+  history.removeLast();
+  drawNode();
+  if (node)
+    delete node;
+}
+
 void DocumentsWindow::processNode(DataBrick *dataBrick) {
   DataBrick *curr = history.last();
   curr->brickNodes.append(dataBrick);
+  dataBrick->parent = curr;
   drawNode();
 }
 

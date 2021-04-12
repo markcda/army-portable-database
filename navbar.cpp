@@ -17,10 +17,20 @@ NavBar::NavBar() {
   lbl->setFont(font);
   lt->addWidget(lbl);
   editNodeBtn = new QToolButton(this);
-  editNodeBtn->setText("Редактировать");
+  editNodeBtn->setText("Редактировать раздел");
   editNodeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   editNodeBtn->setIcon(QIcon(":/arts/16/edit.svg"));
+  editNodeBtn->setPopupMode(QToolButton::InstantPopup);
+  editNode = new QAction("Редактировать");
+  editNodeBtn->addAction(editNode);
+  moveNode = new QAction("Переместить");
+  editNodeBtn->addAction(moveNode);
   lt->addWidget(editNodeBtn);
+  removeNodeBtn = new QToolButton(this);
+  removeNodeBtn->setText("Удалить раздел");
+  removeNodeBtn->setIcon(QIcon(":/arts/16/edit-delete.svg"));
+  removeNodeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  lt->addWidget(removeNodeBtn);
   archiveBtn = new QToolButton(this);
   archiveBtn->setText("Архив");
   lt->addWidget(archiveBtn);
@@ -41,8 +51,10 @@ void NavBar::update(int length, XMLDataBase *db, DataBrick *last) {
   if (last == db->getArchiveDataBrick()) {
     archiveBtn->setEnabled(false);
     editNodeBtn->setHidden(true);
+    removeNodeBtn->setHidden(true);
   } else {
     archiveBtn->setEnabled(true);
     editNodeBtn->setHidden(last == db->getRootDataBrick());
+    removeNodeBtn->setHidden(last == db->getRootDataBrick());
   }
 }

@@ -13,6 +13,7 @@ SOURCES += \
     firsttimesetupdialog.cpp \
     main.cpp \
     documentswindow.cpp \
+    movedialog.cpp \
     navbar.cpp \
     nodescollection.cpp
 HEADERS += \
@@ -29,6 +30,7 @@ HEADERS += \
     editnodedialog.h \
     ex/exporter.h \
     firsttimesetupdialog.h \
+    movedialog.h \
     navbar.h \
     nodescollection.h
 qnx: target.path = /tmp/$${TARGET}/bin

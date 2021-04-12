@@ -7,6 +7,7 @@
 #include "documentwidget.h"
 #include "editnodedialog.h"
 #include "firsttimesetupdialog.h"
+#include "movedialog.h"
 #include "navbar.h"
 #include "nodescollection.h"
 #include <QGridLayout>
@@ -51,6 +52,8 @@ private:
   void goNode(DataBrick *dataBrick);
   void addNode();
   void editNode();
+  void moveNode();
+  void removeNode();
   void addDocument();
   void processNode(DataBrick *dataBrick);
   void processDocument(Document *doc);

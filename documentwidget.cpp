@@ -1,10 +1,11 @@
 #include "documentwidget.h"
 
-DocumentWidget::DocumentWidget(Document *_document, Data *_data,
-                               QWidget *parent)
+DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
+                               Data *_data, QWidget *parent)
     : QWidget(parent) {
-  document = _document;
   data = _data;
+  brickParent = _brickParent;
+  document = _document;
   setObjectName(DW_OBJNAME);
   setStyleSheet("#" + DW_OBJNAME + " { color: rgb(" +
                 QString::number(document->textColor.red()) + ", " +
@@ -37,17 +38,28 @@ DocumentWidget::DocumentWidget(Document *_document, Data *_data,
   editBtn->setText("Изменить");
   connect(editBtn, &QToolButton::clicked, this, &DocumentWidget::editDocument);
   lt->addWidget(editBtn);
-  auto *archiveBtn = new QToolButton(this);
-  archiveBtn->setEnabled(false);
-  archiveBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  archiveBtn->setIcon(QIcon(":/arts/16/archive.svg"));
-  archiveBtn->setText("В архив");
-  lt->addWidget(archiveBtn);
+  if (not(brickParent == data->db->getArchiveDataBrick())) {
+    auto *moveBtn = new QToolButton(this);
+    moveBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    moveBtn->setIcon(QIcon(":/arts/16/archive.svg"));
+    moveBtn->setText("Переместить");
+    auto *moveAction = new QAction("Переместить");
+    connect(moveAction, &QAction::triggered, this,
+            &DocumentWidget::moveDocument);
+    moveBtn->addAction(moveAction);
+    auto *archiveAction = new QAction("В архив");
+    connect(archiveAction, &QAction::triggered, this,
+            &DocumentWidget::archiveDocument);
+    moveBtn->addAction(archiveAction);
+    moveBtn->setPopupMode(QToolButton::InstantPopup);
+    lt->addWidget(moveBtn);
+  }
   auto *removeBtn = new QToolButton(this);
   removeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   removeBtn->setIcon(QIcon(":/arts/16/edit-delete.svg"));
   removeBtn->setText("Удалить");
-  connect(removeBtn, &QToolButton::clicked, this, [this]() { emit removed(document); });
+  connect(removeBtn, &QToolButton::clicked, this,
+          [this]() { emit removed(document); });
   lt->addWidget(removeBtn);
   setLayout(lt);
 }
@@ -78,5 +90,21 @@ void DocumentWidget::openDocumentInApp() {
 void DocumentWidget::editDocument() {
   auto *editDialog = new EditDocumentDialog(document, this);
   editDialog->exec();
+  emit edited();
+}
+
+void DocumentWidget::moveDocument() {
+  auto *moveDialog = new MoveDialog(data, document, brickParent, this);
+  if (moveDialog->exec())
+    emit edited();
+}
+
+void DocumentWidget::archiveDocument() {
+  for (int i = 0; i < brickParent->brickDocuments.length(); i++)
+    if (brickParent->brickDocuments.at(i) == document) {
+      brickParent->brickDocuments.removeAt(i);
+      break;
+    }
+  data->db->getArchiveDataBrick()->brickDocuments.append(document);
   emit edited();
 }

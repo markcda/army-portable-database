@@ -23,6 +23,9 @@ DataBrickWidget::DataBrickWidget(DataBrick *_dataBrick, QWidget *parent)
 }
 
 void DataBrickWidget::mouseReleaseEvent(QMouseEvent *e) {
-  Q_UNUSED(e)
-  emit clicked();
+  if (e->button() == Qt::LeftButton) {
+    emit clicked();
+    e->accept();
+  } else
+    e->ignore();
 }

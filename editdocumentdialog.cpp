@@ -35,6 +35,7 @@ EditDocumentDialog::EditDocumentDialog(Document *_document, QWidget *parent)
   auto *hdoeLbl = new QLabel("Есть ли дата автоархивации?", this);
   lt->addWidget(hdoeLbl, 4, 0);
   hasExpireDate = new QCheckBox(this);
+  hasExpireDate->setEnabled(false);
   hasExpireDate->setChecked(document->hasDateOfExpire);
   lt->addWidget(hasExpireDate, 4, 1);
   auto *doeLbl = new QLabel("Дата автоархивации:", this);

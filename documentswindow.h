@@ -6,6 +6,7 @@
 #include "data.h"
 #include "documentwidget.h"
 #include "editnodedialog.h"
+#include "ex/exporter.h"
 #include "firsttimesetupdialog.h"
 #include "movedialog.h"
 #include "navbar.h"
@@ -38,6 +39,7 @@ private:
   const QString libreOfficePath = "/usr/bin/libreoffice";
   // Объекты:
   Data *data = nullptr;
+  Exporter *exporter = nullptr;
   QList<DataBrick *> history;
   QVBoxLayout *mainLt = nullptr;
   NavBar *navBar = nullptr;
@@ -58,5 +60,9 @@ private:
   void processNode(DataBrick *dataBrick);
   void processDocument(Document *doc);
   void removeDocument(Document *doc);
+  void saveDb();
+  void exportDb();
+  void importDb();
+  virtual void keyPressEvent(QKeyEvent *event);
 };
 #endif

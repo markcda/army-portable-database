@@ -3,8 +3,12 @@
 
 DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
+  auto flags = windowFlags();
+  flags = flags ^ Qt::WindowCloseButtonHint;
+  setWindowFlags(flags);
   resize(1000, 560);
   data = new Data(this);
+  exporter = new Exporter(data, this);
 #ifdef Q_OS_WINDOWS
   if ((data->st->value("notFirstTime") != "not first time") or
       (not data->st->value(data->wordPath)
@@ -46,6 +50,11 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
           &DocumentsWindow::moveNode);
   connect(navBar->removeNodeBtn, &QToolButton::clicked, this,
           &DocumentsWindow::removeNode);
+  connect(navBar->saveDb, &QAction::triggered, this, &DocumentsWindow::saveDb);
+  connect(navBar->exportDb, &QAction::triggered, this,
+          &DocumentsWindow::exportDb);
+  connect(navBar->importDb, &QAction::triggered, this,
+          &DocumentsWindow::importDb);
   mainLt->addWidget(navBar);
   sa = new QScrollArea(cw);
   mainLt->addWidget(sa);
@@ -204,3 +213,41 @@ void DocumentsWindow::removeDocument(Document *doc) {
   }
   drawNode();
 }
+
+void DocumentsWindow::saveDb() {
+  navBar->setEnabled(false);
+  data->db->generateData();
+  data->db->syncDataBase();
+  navBar->setEnabled(true);
+}
+
+void DocumentsWindow::exportDb() {
+  navBar->setEnabled(false);
+  auto fileName = QFileDialog::getSaveFileName(
+      this, "Экспортировать в файл", QDir::homePath(), "База данных (*.xml)");
+  if (not fileName.isEmpty())
+    exporter->exportDataBase(fileName);
+  navBar->setEnabled(true);
+}
+
+void DocumentsWindow::importDb() {
+  navBar->setEnabled(false);
+  auto fileName = QFileDialog::getOpenFileName(
+      this, "Импортировать из файла", QDir::homePath(), "База данных (*.xml)");
+  auto docsDirNameDialog = QFileDialog(this);
+  docsDirNameDialog.setFileMode(QFileDialog::Directory);
+  docsDirNameDialog.setOption(QFileDialog::ShowDirsOnly, true);
+  QString docsDirName = "";
+  if (docsDirNameDialog.exec())
+    if (not docsDirNameDialog.selectedFiles().isEmpty())
+      docsDirName = docsDirNameDialog.selectedFiles()[0];
+  if (fileName.isEmpty() or docsDirName.isEmpty())
+    return;
+  exporter->importDataBase(fileName, docsDirName);
+  navBar->setEnabled(true);
+  history.clear();
+  history.append(data->db->getRootDataBrick());
+  drawNode();
+}
+
+void DocumentsWindow::keyPressEvent(QKeyEvent *event) { event->ignore(); }

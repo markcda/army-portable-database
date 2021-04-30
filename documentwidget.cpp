@@ -6,7 +6,9 @@ DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
   data = _data;
   brickParent = _brickParent;
   document = _document;
-  setObjectName(DW_OBJNAME);
+  setAttribute(Qt::WA_StyledBackground);
+  setContentsMargins(0, 0, 0, 0);
+  setObjectName(LR_OBJNAME);
   setStyleSheet("#" + DW_OBJNAME + " { color: rgb(" +
                 QString::number(document->textColor.red()) + ", " +
                 QString::number(document->textColor.green()) + ", " +
@@ -14,13 +16,22 @@ DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
                 "); background-color: rgb(" +
                 QString::number(document->backgroundColor.red()) + ", " +
                 QString::number(document->backgroundColor.green()) + ", " +
-                QString::number(document->backgroundColor.blue()) + ");}");
+                QString::number(document->backgroundColor.blue()) +
+                "); border-radius: 8px;} #" + LR_OBJNAME +
+                " { background-color: rgba(" +
+                QString::number(document->backgroundColor.red()) + ", " +
+                QString::number(document->backgroundColor.green()) + ", " +
+                QString::number(document->backgroundColor.blue()) +
+                ", 60); border-radius: 8px;}");
   auto *lt = new QHBoxLayout();
+  lt->setContentsMargins(0, 0, 6, 0);
   auto *lbl = new QLabel(this);
   QFont font;
   font.setBold(true);
   lbl->setFont(font);
   lbl->setText(document->name);
+  lbl->setFixedHeight(
+      QFontMetrics(lbl->font()).boundingRect(lbl->text()).height() + 20);
   lbl->setIndent(10);
   lbl->setObjectName(DW_OBJNAME);
   lbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -79,7 +90,7 @@ void DocumentWidget::openDocumentInApp() {
   else if (document->filePath.toLower().endsWith(".vsd"))
     process->setProgram(data->st->value(data->visioPath).toString());
 #ifdef Q_OS_WINDOWS
-  QString path = document->filePath.replace("/", "\\");
+  QString path = QDir::toNativeSeparators(document->filePath);
   process->setNativeArguments("/f \"" + path + "\"");
 #else
   process->setArguments({document->filePath});

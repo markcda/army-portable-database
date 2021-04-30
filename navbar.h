@@ -6,6 +6,7 @@
 #include <QAction>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QToolButton>
 #include <QWidget>
 
@@ -21,6 +22,9 @@ public:
   QAction *moveNode = nullptr;
   QToolButton *removeNodeBtn = nullptr;
   QToolButton *archiveBtn = nullptr;
+  QAction *saveDb = nullptr;
+  QAction *importDb = nullptr;
+  QAction *exportDb = nullptr;
 };
 
 #endif

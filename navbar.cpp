@@ -34,6 +34,17 @@ NavBar::NavBar() {
   archiveBtn = new QToolButton(this);
   archiveBtn->setText("Архив");
   lt->addWidget(archiveBtn);
+  auto *dbBtn = new QToolButton(this);
+  dbBtn->setText("Действия с БД");
+  dbBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  dbBtn->setPopupMode(QToolButton::InstantPopup);
+  saveDb = new QAction("Сохранить базу");
+  dbBtn->addAction(saveDb);
+  importDb = new QAction("Импорт...");
+  dbBtn->addAction(importDb);
+  exportDb = new QAction("Экспорт...");
+  dbBtn->addAction(exportDb);
+  lt->addWidget(dbBtn);
   setLayout(lt);
 }
 

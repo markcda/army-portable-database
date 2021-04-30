@@ -32,6 +32,7 @@ private:
   void moveDocument();
   void archiveDocument();
   const QString DW_OBJNAME = "document";
+  const QString LR_OBJNAME = "background-document";
 };
 
 #endif

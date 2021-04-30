@@ -2,6 +2,7 @@
 #define XMLDATABASE_H
 
 #include "docs/databrick.h"
+#include "docs/database.h"
 #include <QColor>
 #include <QDateTime>
 #include <QDir>
@@ -25,9 +26,10 @@ public:
   DataBrick *getArchiveDataBrick();
   void syncDataBase();
   void generateData();
+  void loadData();
 
-  //Статические методы:
-  static QUuid generateUUID();
+  // Статические методы:
+  static QUuid generateUUID(int i = 1);
 
 private:
   // Константы:
@@ -61,11 +63,9 @@ private:
   // Объекты:
   QString dbDirectory;
   QDomDocument *xmlDataBase = nullptr;
-  DataBrick *rootDataBrick = nullptr;
-  DataBrick *archiveDataBrick = nullptr;
+  DataBase db;
 
   // Методы:
-  void loadData();
   QDomElement generateDomElementFromDataBrick(QDomDocument *domDocument, DataBrick *dataBrick);
   DataBrick *generateDataBrickFromDomElement(QDomElement element);
   Document *generateDocumentFromDomElement(QDomElement element);

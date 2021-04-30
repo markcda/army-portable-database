@@ -104,7 +104,8 @@ QString FirstTimeSetupDialog::getPath(DocumentType docType) {
     break;
   }
   }
-  return QFileDialog::getOpenFileName(this, "Открыть программу", "", fileExt);
+  return QFileDialog::getOpenFileName(this, "Открыть программу",
+                                      QDir::rootPath(), fileExt);
 }
 
 void FirstTimeSetupDialog::saveAll() {

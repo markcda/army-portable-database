@@ -21,6 +21,7 @@ HEADERS += \
     data.h \
     databrickwidget.h \
     addnodedialog.h \
+    docs/database.h \
     docs/databrick.h \
     docs/document.h \
     docs/xmldatabase.h \

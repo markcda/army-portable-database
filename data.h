@@ -18,13 +18,14 @@ public:
   const QString excelPath = "excelPath";
   const QString pptPath = "pptPath";
   const QString visioPath = "visioPath";
+  // Методы:
+  QString getSettingsFileDirectoryPath(QSettings *settings);
 
 private:
   // Методы:
   bool settingsFileExists(QSettings *settings);
   void firstSetup(QSettings *settings);
   void createSettingsFile(QSettings *settings);
-  QString getSettingsFileDirectoryPath(QSettings *settings);
   void createDataBaseFile(QSettings *settings);
 };
 

@@ -27,6 +27,7 @@ AddDocumentDialog::AddDocumentDialog(QWidget *parent) : QDialog(parent) {
   auto *hdoeLbl = new QLabel("Есть ли дата автоархивации?", this);
   lt->addWidget(hdoeLbl, 4, 0);
   hasExpireDate = new QCheckBox(this);
+  hasExpireDate->setEnabled(false);
   lt->addWidget(hasExpireDate, 4, 1);
   auto *doeLbl = new QLabel("Дата автоархивации:", this);
   lt->addWidget(doeLbl, 5, 0);
@@ -53,7 +54,7 @@ AddDocumentDialog::AddDocumentDialog(QWidget *parent) : QDialog(parent) {
 
 void AddDocumentDialog::selectFile() {
   docPath = QFileDialog::getOpenFileName(
-      this, "Открыть программу", "",
+      this, "Открыть программу", QDir::homePath(),
       "Документы MS Office (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd)");
   pathBtn->setText(QFontMetrics(pathBtn->font())
                        .elidedText(docPath, Qt::ElideLeft, pathBtn->width()));

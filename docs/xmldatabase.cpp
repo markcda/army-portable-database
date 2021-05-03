@@ -56,12 +56,12 @@ QUuid XMLDataBase::generateUUID(int i) {
   QUuid uuid;
   for (int j = 0; j < i; j++)
     uuid = QUuid(
-      randomGenerator.bounded(UINT_MAX), randomGenerator.bounded(USHRT_MAX),
-      randomGenerator.bounded(USHRT_MAX), randomGenerator.bounded(UCHAR_MAX),
-      randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
-      randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
-      randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
-      randomGenerator.bounded(UCHAR_MAX));
+        randomGenerator.bounded(UINT_MAX), randomGenerator.bounded(USHRT_MAX),
+        randomGenerator.bounded(USHRT_MAX), randomGenerator.bounded(UCHAR_MAX),
+        randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
+        randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
+        randomGenerator.bounded(UCHAR_MAX), randomGenerator.bounded(UCHAR_MAX),
+        randomGenerator.bounded(UCHAR_MAX));
   return uuid;
 }
 
@@ -198,4 +198,29 @@ void XMLDataBase::destroyDataBrick(DataBrick *dataBrick) {
     if (document)
       delete document;
   dataBrick->brickDocuments.clear();
+}
+
+QList<Document *> XMLDataBase::searchDocuments(QString name,
+                                               DataBrick *dataBrick) {
+  QList<Document *> docs;
+  for (auto *doc : dataBrick->brickDocuments)
+    if (doc->name.toLower().contains(name.toLower()))
+      docs.append(doc);
+  for (auto *childBrick : dataBrick->brickNodes)
+    docs.append(XMLDataBase::searchDocuments(name, childBrick));
+  return docs;
+}
+
+DataBrick *XMLDataBase::findParentByDocument(Document *doc,
+                                             DataBrick *dataBrick) {
+  for (auto *_doc : dataBrick->brickDocuments)
+    if (doc == _doc)
+      return dataBrick;
+  DataBrick *r = nullptr;
+  for (auto *childBrick : dataBrick->brickNodes) {
+    auto *b = XMLDataBase::findParentByDocument(doc, childBrick);
+    if (b != nullptr)
+      r = b;
+  }
+  return r;
 }

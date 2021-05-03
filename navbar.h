@@ -21,6 +21,7 @@ public:
   QAction *editNode = nullptr;
   QAction *moveNode = nullptr;
   QToolButton *removeNodeBtn = nullptr;
+  QToolButton *searchBtn = nullptr;
   QToolButton *archiveBtn = nullptr;
   QAction *saveDb = nullptr;
   QAction *importDb = nullptr;

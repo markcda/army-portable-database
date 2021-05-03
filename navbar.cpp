@@ -31,6 +31,11 @@ NavBar::NavBar() {
   removeNodeBtn->setIcon(QIcon(":/arts/16/edit-delete.svg"));
   removeNodeBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   lt->addWidget(removeNodeBtn);
+  searchBtn = new QToolButton(this);
+  searchBtn->setText("Поиск...");
+  searchBtn->setIcon(QIcon(":/arts/16/edit-find.svg"));
+  searchBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  lt->addWidget(searchBtn);
   archiveBtn = new QToolButton(this);
   archiveBtn->setText("Архив");
   lt->addWidget(archiveBtn);

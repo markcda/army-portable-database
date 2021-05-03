@@ -42,6 +42,8 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
           &DocumentsWindow::goBack);
   connect(navBar->mainBtn, &QToolButton::clicked, this,
           &DocumentsWindow::goFirst);
+  connect(navBar->searchBtn, &QToolButton::clicked, this,
+          &DocumentsWindow::openSearchDialog);
   connect(navBar->archiveBtn, &QToolButton::clicked, this,
           &DocumentsWindow::goArchive);
   connect(navBar->editNode, &QAction::triggered, this,
@@ -250,4 +252,11 @@ void DocumentsWindow::importDb() {
   drawNode();
 }
 
-void DocumentsWindow::keyPressEvent(QKeyEvent *event) { event->ignore(); }
+void DocumentsWindow::closeEvent(QCloseEvent *event) { event->ignore(); }
+
+void DocumentsWindow::openSearchDialog() {
+  auto *sd = new SearchDialog(data, history.last(), this);
+  sd->show();
+  sd->exec();
+  drawNode();
+}

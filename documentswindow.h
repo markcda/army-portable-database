@@ -11,6 +11,7 @@
 #include "movedialog.h"
 #include "navbar.h"
 #include "nodescollection.h"
+#include "searchdialog.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -63,6 +64,7 @@ private:
   void saveDb();
   void exportDb();
   void importDb();
-  virtual void keyPressEvent(QKeyEvent *event);
+  void openSearchDialog();
+  virtual void closeEvent(QCloseEvent *event);
 };
 #endif

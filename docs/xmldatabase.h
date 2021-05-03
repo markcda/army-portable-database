@@ -11,6 +11,7 @@
 #include <QDomNode>
 #include <QDomNodeList>
 #include <QFile>
+#include <QList>
 #include <QRandomGenerator>
 #include <QRgb>
 
@@ -30,6 +31,8 @@ public:
 
   // Статические методы:
   static QUuid generateUUID(int i = 1);
+  static QList<Document *> searchDocuments(QString name, DataBrick *dataBrick);
+  static DataBrick *findParentByDocument(Document *doc, DataBrick *dataBrick);
 
 private:
   // Константы:

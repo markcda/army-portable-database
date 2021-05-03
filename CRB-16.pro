@@ -15,7 +15,8 @@ SOURCES += \
     documentswindow.cpp \
     movedialog.cpp \
     navbar.cpp \
-    nodescollection.cpp
+    nodescollection.cpp \
+    searchdialog.cpp
 HEADERS += \
     adddocumentdialog.h \
     data.h \
@@ -33,7 +34,8 @@ HEADERS += \
     firsttimesetupdialog.h \
     movedialog.h \
     navbar.h \
-    nodescollection.h
+    nodescollection.h \
+    searchdialog.h
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target

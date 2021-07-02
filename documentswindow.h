@@ -17,10 +17,12 @@
 #include <QLabel>
 #include <QList>
 #include <QMainWindow>
+#include <QMutex>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSpacerItem>
+#include <QTimer>
 #include <QToolButton>
 #include <QWidget>
 
@@ -46,6 +48,8 @@ private:
   NavBar *navBar = nullptr;
   QWidget *bottomToolBar = nullptr;
   QScrollArea *sa = nullptr;
+  QMutex *autosaveMutex = new QMutex();
+  int *changeNum = new int(0);
   // Методы:
   void drawNode();
   QWidget *getBottomToolBar();
@@ -65,6 +69,7 @@ private:
   void exportDb();
   void importDb();
   void openSearchDialog();
+  void autosaveLoop();
   virtual void closeEvent(QCloseEvent *event);
 };
 #endif

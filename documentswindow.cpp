@@ -65,11 +65,16 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   cw->setLayout(mainLt);
   setCentralWidget(cw);
   drawNode();
+  autosaveLoop();
 }
 
 DocumentsWindow::~DocumentsWindow() {
   data->db->generateData();
   data->db->syncDataBase();
+}
+
+void DocumentsWindow::autosaveLoop() {
+  QTimer::singleShot(60000, this, [this]() { saveDb(); autosaveLoop(); });
 }
 
 void DocumentsWindow::drawNode() {
@@ -93,7 +98,7 @@ void DocumentsWindow::drawNode() {
           &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments) {
-    auto *d = new DocumentWidget(doc, brick, data, nsa);
+    auto *d = new DocumentWidget(doc, brick, data, autosaveMutex, changeNum, nsa);
     connect(d, &DocumentWidget::removed, this,
             &DocumentsWindow::removeDocument);
     connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
@@ -147,37 +152,56 @@ void DocumentsWindow::goArchive() {
 }
 
 void DocumentsWindow::addNode() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   auto *addNodeDialog = new AddNodeDialog(data, this);
   connect(addNodeDialog, &AddNodeDialog::sendResult, this,
           &DocumentsWindow::processNode);
-  addNodeDialog->show();
+  addNodeDialog->exec();
+  if (addNodeDialog->result() == QDialog::Accepted)
+    *changeNum += 1;
+  autosaveMutex->unlock();
 }
 
 void DocumentsWindow::editNode() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   auto *editNode = new EditNodeDialog(history.last(), this);
   editNode->exec();
+  if (editNode->result() == QDialog::Accepted)
+    *changeNum += 1;
+  autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::moveNode() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   auto *moveNode =
       new MoveDialog(data, history.last(), history.last()->parent, this);
   moveNode->exec();
+  if (moveNode->result() == QDialog::Accepted)
+    *changeNum += 1;
+  autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::removeNode() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   auto *node = history.last();
   auto *parentBrick = node->parent;
   for (int i = 0; i < parentBrick->brickNodes.length(); i++)
     if (parentBrick->brickNodes.at(i) == node) {
       parentBrick->brickNodes.removeAt(i);
+      *changeNum += 1;
       break;
     }
   history.removeLast();
   drawNode();
   if (node)
     delete node;
+  autosaveMutex->unlock();
 }
 
 void DocumentsWindow::processNode(DataBrick *dataBrick) {
@@ -188,10 +212,15 @@ void DocumentsWindow::processNode(DataBrick *dataBrick) {
 }
 
 void DocumentsWindow::addDocument() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   auto *addDocumentDialog = new AddDocumentDialog(this);
   connect(addDocumentDialog, &AddDocumentDialog::sendResult, this,
           &DocumentsWindow::processDocument);
-  addDocumentDialog->show();
+  addDocumentDialog->exec();
+  if (addDocumentDialog->result() == QDialog::Accepted)
+    *changeNum += 1;
+  autosaveMutex->unlock();
 }
 
 void DocumentsWindow::processDocument(Document *document) {
@@ -206,21 +235,31 @@ void DocumentsWindow::goNode(DataBrick *dataBrick) {
 }
 
 void DocumentsWindow::removeDocument(Document *doc) {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   DataBrick *curr = history.last();
   for (int i = 0; i < curr->brickDocuments.length(); i++) {
     if (curr->brickDocuments.at(i) == doc) {
       curr->brickDocuments.removeAt(i);
+      *changeNum += 1;
       break;
     }
   }
+  autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::saveDb() {
+  if (changeNum == 0)
+    return;
+  if (not autosaveMutex->tryLock(3000))
+    return;
   navBar->setEnabled(false);
   data->db->generateData();
   data->db->syncDataBase();
   navBar->setEnabled(true);
+  *changeNum = 0;
+  autosaveMutex->unlock();
 }
 
 void DocumentsWindow::exportDb() {
@@ -233,6 +272,8 @@ void DocumentsWindow::exportDb() {
 }
 
 void DocumentsWindow::importDb() {
+  if (not autosaveMutex->tryLock(3000))
+    return;
   navBar->setEnabled(false);
   auto fileName = QFileDialog::getOpenFileName(
       this, "Импортировать из файла", QDir::homePath(), "База данных (*.xml)");
@@ -243,20 +284,23 @@ void DocumentsWindow::importDb() {
   if (docsDirNameDialog.exec())
     if (not docsDirNameDialog.selectedFiles().isEmpty())
       docsDirName = docsDirNameDialog.selectedFiles()[0];
-  if (fileName.isEmpty() or docsDirName.isEmpty())
+  if (fileName.isEmpty() or docsDirName.isEmpty()) {
+    autosaveMutex->unlock();
     return;
+  }
   exporter->importDataBase(fileName, docsDirName);
   navBar->setEnabled(true);
   history.clear();
   history.append(data->db->getRootDataBrick());
+  *changeNum = 0;
+  autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::closeEvent(QCloseEvent *event) { event->ignore(); }
 
 void DocumentsWindow::openSearchDialog() {
-  auto *sd = new SearchDialog(data, history.last(), this);
-  sd->show();
+  auto *sd = new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
   sd->exec();
   drawNode();
 }

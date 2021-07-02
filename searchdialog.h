@@ -14,13 +14,16 @@
 
 class SearchDialog : public QDialog {
 public:
-  SearchDialog(Data *_data, DataBrick *_brick, QWidget *parent = nullptr);
+  SearchDialog(Data *_data, DataBrick *_brick, QMutex *mutex,
+               int *changeNum, QWidget *parent = nullptr);
   void searchAndDraw(QString ask);
 
 private:
   Data *data = nullptr;
   DataBrick *brick = nullptr;
   QScrollArea *area = nullptr;
+  QMutex *mx = nullptr;
+  int *cn = nullptr;
   void removeDocument(Document *doc);
 };
 

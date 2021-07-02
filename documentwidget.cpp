@@ -1,11 +1,13 @@
 #include "documentwidget.h"
 
 DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
-                               Data *_data, QWidget *parent)
+                               Data *_data, QMutex *mutex, int *changeNum, QWidget *parent)
     : QWidget(parent) {
   data = _data;
   brickParent = _brickParent;
   document = _document;
+  mx = mutex;
+  cn = changeNum;
   setAttribute(Qt::WA_StyledBackground);
   setContentsMargins(0, 0, 0, 0);
   setObjectName(LR_OBJNAME);
@@ -91,7 +93,7 @@ void DocumentWidget::openDocumentInApp() {
     process->setProgram(data->st->value(data->visioPath).toString());
 #ifdef Q_OS_WINDOWS
   QString path = QDir::toNativeSeparators(document->filePath);
-  process->setNativeArguments("/f \"" + path + "\"");
+  process->setNativeArguments("\"" + path + "\"");
 #else
   process->setArguments({document->filePath});
 #endif
@@ -99,23 +101,36 @@ void DocumentWidget::openDocumentInApp() {
 }
 
 void DocumentWidget::editDocument() {
+  if (not mx->tryLock(3000))
+    return;
   auto *editDialog = new EditDocumentDialog(document, this);
   editDialog->exec();
+  *cn += 1;
+  mx->unlock();
   emit edited();
 }
 
 void DocumentWidget::moveDocument() {
+  if (not mx->tryLock(3000))
+    return;
   auto *moveDialog = new MoveDialog(data, document, brickParent, this);
-  if (moveDialog->exec())
+  if (moveDialog->exec()) {
+    *cn += 1;
     emit edited();
+  }
+  mx->unlock();
 }
 
 void DocumentWidget::archiveDocument() {
+  if (not mx->tryLock(3000))
+    return;
   for (int i = 0; i < brickParent->brickDocuments.length(); i++)
     if (brickParent->brickDocuments.at(i) == document) {
       brickParent->brickDocuments.removeAt(i);
+      *cn += 1;
       break;
     }
   data->db->getArchiveDataBrick()->brickDocuments.append(document);
+  mx->unlock();
   emit edited();
 }

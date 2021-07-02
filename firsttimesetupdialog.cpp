@@ -3,7 +3,6 @@
 FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
     : QDialog(parent) {
   data = _data;
-  // TODO пути для Word, Visio, PowerPoint и Excel
   setWindowTitle("Первый запуск");
   setModal(true);
   auto *vblt = new QVBoxLayout();

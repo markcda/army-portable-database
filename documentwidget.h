@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMutex>
 #include <QProcess>
 #include <QToolButton>
 #include <QWidget>
@@ -17,7 +18,7 @@ class DocumentWidget : public QWidget {
   Q_OBJECT
 public:
   DocumentWidget(Document *_document, DataBrick *_brickParent, Data *_data,
-                 QWidget *parent = nullptr);
+                 QMutex *mutex, int *changeNum, QWidget *parent = nullptr);
 
 signals:
   Document *removed(Document *document);
@@ -31,6 +32,8 @@ private:
   void editDocument();
   void moveDocument();
   void archiveDocument();
+  QMutex *mx = nullptr;
+  int *cn = nullptr;
   const QString DW_OBJNAME = "document";
   const QString LR_OBJNAME = "background-document";
 };

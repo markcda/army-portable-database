@@ -1,11 +1,14 @@
 #include "searchdialog.h"
 
-SearchDialog::SearchDialog(Data *_data, DataBrick *_brick, QWidget *parent)
+SearchDialog::SearchDialog(Data *_data, DataBrick *_brick,
+                           QMutex *mutex, int *changeNum, QWidget *parent)
     : QDialog(parent) {
   setModal(true);
   resize(1000, 560);
   data = _data;
   brick = _brick;
+  mx = mutex;
+  cn = changeNum;
   setWindowTitle("Поиск документов в разделе \"" + brick->name + "\"");
   auto *lt = new QGridLayout();
   auto *searcher = new QLineEdit(this);
@@ -31,7 +34,7 @@ void SearchDialog::searchAndDraw(QString ask) {
   auto *wlt = new QVBoxLayout(w);
   auto docs = data->db->searchDocuments(ask, brick);
   for (auto *doc : docs) {
-    auto *d = new DocumentWidget(doc, brick, data, w);
+    auto *d = new DocumentWidget(doc, brick, data, mx, cn, w);
     connect(d, &DocumentWidget::removed, this, [this, doc, d]() {
       removeDocument(doc);
       d->hide();
@@ -49,12 +52,16 @@ void SearchDialog::searchAndDraw(QString ask) {
 }
 
 void SearchDialog::removeDocument(Document *doc) {
+  if (not mx->tryLock(3000))
+    return;
   auto *b = data->db->findParentByDocument(doc, brick);
   if (not b)
     return;
   for (int i = 0; i < b->brickDocuments.length(); i++)
     if (b->brickDocuments.at(i) == doc) {
       b->brickDocuments.removeAt(i);
+      *cn += 1;
       break;
     }
+  mx->unlock();
 }

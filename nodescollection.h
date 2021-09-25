@@ -11,16 +11,16 @@ class NodesCollection : public QWidget {
 public:
   // Конструкторы:
   NodesCollection(QList<DataBrick *> dataBricks, QWidget *parent = nullptr);
-
+  // Константы:
+  inline static const QString DBW_OBJNAME = "databrick";
+  inline static const QString NC_BORDER =
+      "border-width: 2px; border-style: solid; border-radius: 5px; ";
 signals:
   DataBrick *openDataBrick(DataBrick *dataBrick);
 
 private:
   // Константы:
   const int NC_NODESINLINE = 4;
-  const QString DBW_OBJNAME = "databrick";
-  const QString NC_BORDER =
-      "border-width: 2px; border-style: solid; border-radius: 5px; ";
   // Объекты:
   QList<QWidget *> widgetCollection;
   // Методы:

@@ -9,10 +9,10 @@ SearchDialog::SearchDialog(Data *_data, DataBrick *_brick,
   brick = _brick;
   mx = mutex;
   cn = changeNum;
-  setWindowTitle("Поиск документов в разделе \"" + brick->name + "\"");
+  setWindowTitle("Поиск документов и разделов в \"" + brick->name + "\"");
   auto *lt = new QGridLayout();
   auto *searcher = new QLineEdit(this);
-  searcher->setPlaceholderText("Поиск документов...");
+  searcher->setPlaceholderText("Поиск...");
   lt->addWidget(searcher, 0, 0);
   auto *searchBtn = new QPushButton(this);
   searchBtn->setText("Искать");
@@ -29,9 +29,31 @@ SearchDialog::SearchDialog(Data *_data, DataBrick *_brick,
 }
 
 void SearchDialog::searchAndDraw(QString ask) {
-  setWindowTitle("Поиск документов, включающих в названии \"" + ask + "\"");
+  setWindowTitle("Поиск документов и разделов, включающих в названии \"" + ask + "\"");
   auto *w = new QWidget(area);
   auto *wlt = new QVBoxLayout(w);
+  auto nodes = data->db->searchNodes(ask, brick);
+  for (int cntr = nodes.keys().length(); cntr > 0; cntr--) {
+    for (auto *node : nodes[cntr]) {
+      auto *nodeWidget = new DataBrickWidget(node, this);
+      nodeWidget->setObjectName(NodesCollection::DBW_OBJNAME);
+      nodeWidget->setStyleSheet("#" + NodesCollection::DBW_OBJNAME + 
+      " { " + NodesCollection::NC_BORDER + " " + "border-color: rgb(" +
+      QString::number(node->brickColor.red()) + ", " +
+      QString::number(node->brickColor.green()) + ", " +
+      QString::number(node->brickColor.blue()) +
+      "); color: rgb(" +
+      QString::number(node->textColor.red()) + ", " +
+      QString::number(node->textColor.green()) + ", " +
+      QString::number(node->textColor.blue()) +
+      "); background-color: rgb(" +
+      QString::number(node->brickColor.red()) + ", " +
+      QString::number(node->brickColor.green()) + ", " +
+      QString::number(node->brickColor.blue()) + ");}");
+      connect(nodeWidget, &DataBrickWidget::openDataBrick, this, &SearchDialog::openDataBrick);
+      wlt->addWidget(nodeWidget);
+    }
+  }
   auto docs = data->db->searchDocuments(ask, brick);
   for (int cntr = docs.keys().length(); cntr > 0; cntr--) {
     for (auto *doc : docs[cntr]) {
@@ -51,6 +73,12 @@ void SearchDialog::searchAndDraw(QString ask) {
   if (area->widget())
     area->widget()->hide();
   area->setWidget(w);
+}
+
+void SearchDialog::openDataBrick(DataBrick *brick) {
+  if (!brick) return; // Если удалили раздел в базе, но не обновили результаты поиска.
+  emit openNodeInDW(brick);
+  close();
 }
 
 void SearchDialog::removeDocument(Document *doc) {

@@ -21,7 +21,6 @@ public:
   // Конструкторы:
   XMLDataBase(QString directoryPath);
   ~XMLDataBase();
-
   // Методы:
   static void createXMLDataBase(QString directoryPath);
   DataBrick *getRootDataBrick();
@@ -29,10 +28,10 @@ public:
   void syncDataBase();
   void generateData();
   void loadData();
-
   // Статические методы:
   static QUuid generateUUID(int i = 1);
   static QMap<int, QList<Document *>> searchDocuments(QString name, DataBrick *dataBrick);
+  static QMap<int, QList<DataBrick *>> searchNodes(QString name, DataBrick *dataBrick);
   static DataBrick *findParentByDocument(Document *doc, DataBrick *dataBrick);
 
 private:
@@ -56,19 +55,16 @@ private:
   inline static const QString DATABASE_DOCATTR_EXPIREDATETIME = "to";
   inline static const QString DATABASE_DOCATTR_COLOR = "color";
   inline static const QString DATABASE_DOCATTR_TEXTCOLOR = "text-color";
-
   // Статические методы:
   static QDomElement createRootElement(QDomDocument *doc,
                                        QString rootElementName = "База данных");
   static QDomElement
   createArchiveElement(QDomDocument *doc,
                        QString archiveElementName = "Архив документов");
-
   // Объекты:
   QString dbDirectory;
   QDomDocument *xmlDataBase = nullptr;
   DataBase db;
-
   // Методы:
   QDomElement generateDomElementFromDataBrick(QDomDocument *domDocument, DataBrick *dataBrick);
   DataBrick *generateDataBrickFromDomElement(QDomElement element);

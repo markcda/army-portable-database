@@ -286,6 +286,7 @@ void DocumentsWindow::importDb() {
       docsDirName = docsDirNameDialog.selectedFiles()[0];
   if (fileName.isEmpty() or docsDirName.isEmpty()) {
     autosaveMutex->unlock();
+    navBar->setEnabled(true);
     return;
   }
   exporter->importDataBase(fileName, docsDirName);
@@ -301,6 +302,7 @@ void DocumentsWindow::closeEvent(QCloseEvent *event) { event->ignore(); }
 
 void DocumentsWindow::openSearchDialog() {
   auto *sd = new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
+  connect(sd, &SearchDialog::openNodeInDW, this, &DocumentsWindow::goNode);
   sd->exec();
   drawNode();
 }

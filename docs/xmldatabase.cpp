@@ -201,7 +201,7 @@ void XMLDataBase::destroyDataBrick(DataBrick *dataBrick) {
 }
 
 QMap<int, QList<Document *>> XMLDataBase::searchDocuments(QString name,
-                                               DataBrick *dataBrick) {
+                                                          DataBrick *dataBrick) {
   QMap<int, QList<Document *>> docs;
   for (int i = name.split(" ").length(); i > 0; i--) docs.insert(i, QList<Document *>());
   for (auto *doc : dataBrick->brickDocuments) {
@@ -216,6 +216,22 @@ QMap<int, QList<Document *>> XMLDataBase::searchDocuments(QString name,
     }
   }
   return docs;
+}
+
+QMap<int, QList<DataBrick *>> XMLDataBase::searchNodes(QString name, 
+                                                       DataBrick *dataBrick) {
+  QMap<int, QList<DataBrick *>> nodes;
+  for (int i = name.split(" ").length(); i > 0; i--) nodes.insert(i, QList<DataBrick *>());
+  int cntr = 0;
+  for (auto word : name.split(" "))
+    if (dataBrick->name.toLower().contains(word.toLower())) cntr++;
+  if (cntr)
+    nodes[cntr].append(dataBrick);
+  for (auto *childBrick : dataBrick->brickNodes) {
+    QMap<int, QList<DataBrick *>> new_nodes = XMLDataBase::searchNodes(name, childBrick);
+    for (int i = name.split(" ").length(); i > 0; i--) nodes[i].append(new_nodes[i]);
+  }
+  return nodes;
 }
 
 DataBrick *XMLDataBase::findParentByDocument(Document *doc,

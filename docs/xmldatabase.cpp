@@ -200,14 +200,21 @@ void XMLDataBase::destroyDataBrick(DataBrick *dataBrick) {
   dataBrick->brickDocuments.clear();
 }
 
-QList<Document *> XMLDataBase::searchDocuments(QString name,
+QMap<int, QList<Document *>> XMLDataBase::searchDocuments(QString name,
                                                DataBrick *dataBrick) {
-  QList<Document *> docs;
-  for (auto *doc : dataBrick->brickDocuments)
-    if (doc->name.toLower().contains(name.toLower()))
-      docs.append(doc);
-  for (auto *childBrick : dataBrick->brickNodes)
-    docs.append(XMLDataBase::searchDocuments(name, childBrick));
+  QMap<int, QList<Document *>> docs;
+  for (int i = name.split(" ").length(); i > 0; i--) docs.insert(i, QList<Document *>());
+  for (auto *doc : dataBrick->brickDocuments) {
+    int cntr = 0;
+    for (auto word : name.split(" "))
+      if (doc->name.toLower().contains(word.toLower())) cntr++;
+    if (cntr)
+      docs[cntr].append(doc);
+    for (auto *childBrick : dataBrick->brickNodes) {
+      QMap<int, QList<Document *>> new_docs = XMLDataBase::searchDocuments(name, childBrick);
+      for (int i = name.split(" ").length(); i > 0; i--) docs[i].append(new_docs[i]);
+    }
+  }
   return docs;
 }
 

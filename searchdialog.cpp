@@ -33,15 +33,17 @@ void SearchDialog::searchAndDraw(QString ask) {
   auto *w = new QWidget(area);
   auto *wlt = new QVBoxLayout(w);
   auto docs = data->db->searchDocuments(ask, brick);
-  for (auto *doc : docs) {
-    auto *d = new DocumentWidget(doc, brick, data, mx, cn, w);
-    connect(d, &DocumentWidget::removed, this, [this, doc, d]() {
-      removeDocument(doc);
-      d->hide();
-    });
-    connect(d, &DocumentWidget::edited, this,
-            [this, ask]() { searchAndDraw(ask); });
-    wlt->addWidget(d);
+  for (int cntr = docs.keys().length(); cntr > 0; cntr--) {
+    for (auto *doc : docs[cntr]) {
+      auto *d = new DocumentWidget(doc, brick, data, mx, cn, w);
+      connect(d, &DocumentWidget::removed, this, [this, doc, d]() {
+        removeDocument(doc);
+        d->hide();
+      });
+      connect(d, &DocumentWidget::edited, this,
+              [this, ask]() { searchAndDraw(ask); });
+      wlt->addWidget(d);
+    }
   }
   wlt->addItem(
       new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));

@@ -66,6 +66,34 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
             .elidedText(MSVisio, Qt::ElideLeft, visioBtn->width()));
   });
   glt->addWidget(visioBtn, 3, 1);
+  // 5
+  auto *winRarLbl = new QLabel(this);
+  winRarLbl->setText("Путь до WinRar:");
+  winRarLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  glt->addWidget(winRarLbl, 4, 0);
+  winRarBtn = new QPushButton(this);
+  winRarBtn->setText(noPath);
+  connect(winRarBtn, &QPushButton::clicked, this, [this]() {
+    WinRar = getPath(DocumentType::WinRar);
+    winRarBtn->setText(
+        QFontMetrics(winRarBtn->font())
+            .elidedText(WinRar, Qt::ElideLeft, winRarBtn->width()));
+  });
+  glt->addWidget(winRarBtn, 4, 1);
+  // 6
+  auto *adobeAcrobatLbl = new QLabel(this);
+  adobeAcrobatLbl->setText("Путь до Adobe Acrobat:");
+  adobeAcrobatLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  glt->addWidget(adobeAcrobatLbl, 5, 0);
+  adobeAcrobatBtn = new QPushButton(this);
+  adobeAcrobatBtn->setText(noPath);
+  connect(adobeAcrobatBtn, &QPushButton::clicked, this, [this]() {
+    AdobeAcrobat = getPath(DocumentType::AdobeAcrobat);
+    adobeAcrobatBtn->setText(
+        QFontMetrics(adobeAcrobatBtn->font())
+            .elidedText(AdobeAcrobat, Qt::ElideLeft, adobeAcrobatBtn->width()));
+  });
+  glt->addWidget(adobeAcrobatBtn, 5, 1);
   // Конец
   group->setLayout(glt);
   vblt->addWidget(group);
@@ -77,7 +105,11 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
 }
 
 void FirstTimeSetupDialog::updateAcceptEnabled() {
-  if (MSWord.isEmpty() or MSPP.isEmpty() or MSExcel.isEmpty())
+  if (MSWord.isEmpty() or 
+    MSPP.isEmpty() or 
+    MSExcel.isEmpty() or 
+    WinRar.isEmpty() or 
+    AdobeAcrobat.isEmpty())
     acceptBtn->setEnabled(false);
   else
     acceptBtn->setEnabled(true);
@@ -102,6 +134,14 @@ QString FirstTimeSetupDialog::getPath(DocumentType docType) {
     fileExt = "Программа MS PowerPoint (*.exe)";
     break;
   }
+  case DocumentType::WinRar: {
+    fileExt = "Программа WinRar (*.exe)";
+    break;
+  }
+  case DocumentType::AdobeAcrobat: {
+    fileExt = "Программа Adobe Acrobat (*.exe)";
+    break;
+  }
   }
   return QFileDialog::getOpenFileName(this, "Открыть программу",
                                       QDir::rootPath(), fileExt);
@@ -112,5 +152,7 @@ void FirstTimeSetupDialog::saveAll() {
   data->st->setValue(data->excelPath, MSExcel);
   data->st->setValue(data->pptPath, MSPP);
   data->st->setValue(data->visioPath, MSVisio);
+  data->st->setValue(data->archivesPath, WinRar);
+  data->st->setValue(data->pdfPath, AdobeAcrobat);
   close();
 }

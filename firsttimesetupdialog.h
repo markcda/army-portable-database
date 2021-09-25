@@ -11,7 +11,7 @@
 #include <QPushButton>
 #include <QSpacerItem>
 
-enum DocumentType { MSWord, MSVisio, MSPowerPoint, MSExcel };
+enum DocumentType { MSWord, MSVisio, MSPowerPoint, MSExcel, WinRar, AdobeAcrobat };
 
 class FirstTimeSetupDialog : public QDialog {
 public:
@@ -27,10 +27,14 @@ private:
   QString MSVisio;
   QString MSPP;
   QString MSExcel;
+  QString WinRar;
+  QString AdobeAcrobat;
   QPushButton *wordBtn = nullptr;
   QPushButton *ppBtn = nullptr;
   QPushButton *excelBtn = nullptr;
   QPushButton *visioBtn = nullptr;
+  QPushButton *winRarBtn = nullptr;
+  QPushButton *adobeAcrobatBtn = nullptr;
   QPushButton *acceptBtn = nullptr;
   // Методы:
   void saveAll();

@@ -91,6 +91,12 @@ void DocumentWidget::openDocumentInApp() {
     process->setProgram(data->st->value(data->pptPath).toString());
   else if (document->filePath.toLower().endsWith(".vsd"))
     process->setProgram(data->st->value(data->visioPath).toString());
+  else if (document->filePath.toLower().endsWith(".rar") or
+           document->filePath.toLower().endsWith(".zip")or
+           document->filePath.toLower().endsWith(".7z"))
+    process->setProgram(data->st->value(data->archivesPath).toString());
+  else if (document->filePath.toLower().endsWith(".pdf"))
+    process->setProgram(data->st->value(data->pdfPath).toString());
 #ifdef Q_OS_WINDOWS
   QString path = QDir::toNativeSeparators(document->filePath);
   process->setNativeArguments("\"" + path + "\"");

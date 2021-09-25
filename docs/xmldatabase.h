@@ -36,8 +36,11 @@ public:
 
 private:
   // Константы:
-  inline static const QString DATABASE_FILENAME = "ArmyDB.xml";
+  inline static const QString DATABASE_FILENAME = "portable_database.xml";
   inline static const QString DATABASE_DOCTYPE = "cclc-xml-db";
+  
+  inline static const QString DATABASE_BACKUP_FILENAME = "portable_database_backup.xml";
+  inline static const QString OLD_DATABASE_FILENAME = "ArmyDB.xml";
 
   inline static const QString DATABASE_NODES_TAGNAME = "nodes";
 

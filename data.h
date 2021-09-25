@@ -18,6 +18,8 @@ public:
   const QString excelPath = "excelPath";
   const QString pptPath = "pptPath";
   const QString visioPath = "visioPath";
+  const QString archivesPath = "archivesPath";
+  const QString pdfPath = "pdfPath";
   // Методы:
   QString getSettingsFileDirectoryPath(QSettings *settings);
 

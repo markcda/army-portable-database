@@ -66,10 +66,13 @@ QUuid XMLDataBase::generateUUID(int i) {
 }
 
 void XMLDataBase::syncDataBase() {
-  QDir::setCurrent(dbDirectory);
-  QFile xmlDataBaseFile(DATABASE_FILENAME);
-  if (not xmlDataBaseFile.exists())
-    return;
+  QFile xmlDataBaseFile(dbDirectory + QDir::separator() + DATABASE_FILENAME);
+  if (xmlDataBaseFile.exists()) {
+    QFile xmlDataBaseBackupFile(dbDirectory + QDir::separator() + DATABASE_BACKUP_FILENAME);
+    if (xmlDataBaseBackupFile.exists())
+      xmlDataBaseBackupFile.remove();
+    xmlDataBaseFile.copy(dbDirectory + QDir::separator() + DATABASE_BACKUP_FILENAME);
+  }
   xmlDataBaseFile.open(QIODevice::WriteOnly);
   xmlDataBaseFile.write(xmlDataBase->toByteArray());
   xmlDataBaseFile.close();
@@ -91,11 +94,44 @@ void XMLDataBase::generateData() {
 void XMLDataBase::loadData() {
   QFile xmlDataBaseFile(dbDirectory + QDir::separator() + DATABASE_FILENAME);
   if (not xmlDataBaseFile.exists())
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_BACKUP_FILENAME);
+  if (not xmlDataBaseFile.exists())
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + OLD_DATABASE_FILENAME);
+  if (not xmlDataBaseFile.exists()) {
     XMLDataBase::createXMLDataBase(dbDirectory);
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_FILENAME);
+  }
   xmlDataBaseFile.open(QIODevice::ReadOnly);
-  xmlDataBase = new QDomDocument();
-  xmlDataBase->setContent(xmlDataBaseFile.readAll());
+  auto xml = xmlDataBaseFile.readAll();
   xmlDataBaseFile.close();
+  if (xml.isEmpty()) {
+    xmlDataBaseFile.close();
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_BACKUP_FILENAME);
+    xmlDataBaseFile.open(QIODevice::ReadOnly);
+    xml = xmlDataBaseFile.readAll();
+    if (xml.isEmpty()) {
+      XMLDataBase::createXMLDataBase(dbDirectory);
+      xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_FILENAME);
+    }
+  }
+  xmlDataBase = new QDomDocument();
+  if (not xmlDataBase->setContent(xml)) {
+    // Парсер не распознал базу данных, откат к предыдущей версии
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_BACKUP_FILENAME);
+    xmlDataBaseFile.copy(dbDirectory + QDir::separator() + DATABASE_FILENAME);
+    xmlDataBaseFile.close();
+    xmlDataBaseFile.setFileName(dbDirectory + QDir::separator() + DATABASE_FILENAME);
+    xmlDataBaseFile.open(QIODevice::ReadOnly);
+    xml = xmlDataBaseFile.readAll();
+    xmlDataBaseFile.close();
+    if (not xmlDataBase->setContent(xml)) { // Бэкап тоже не парсится. Создание базы данных с нуля.
+      XMLDataBase::createXMLDataBase(dbDirectory);
+      xmlDataBaseFile.open(QIODevice::ReadOnly);
+      xml = xmlDataBaseFile.readAll();
+      xmlDataBaseFile.close();
+      xmlDataBase->setContent(xml);
+    }
+  }
   QDomElement rootElement = xmlDataBase->childNodes()
                                 .at(0)
                                 .toElement()

@@ -22,16 +22,31 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
        not data->st->value(data->pptPath)
                .toString()
                .toLower()
+               .contains("exe") and 
+       not data->st->value(data->archivesPath)
+               .toString()
+               .toLower()
+               .contains("exe") and
+       not data->st->value(data->pdfPath)
+               .toString()
+               .toLower()
                .contains("exe"))) {
     (new FirstTimeSetupDialog(data, this))->exec();
     data->st->setValue("notFirstTime", "not first time");
   }
 #else
-  if (data->st->value("notFirstTime") != "not first time") {
+  if ((data->st->value("notFirstTime") != "not first time") or
+      (data->st->value(data->wordPath).toString() != libreOfficePath or
+       data->st->value(data->excelPath).toString() != libreOfficePath or
+       data->st->value(data->pptPath).toString() != libreOfficePath or
+       data->st->value(data->archivesPath).toString() != arkPath or
+       data->st->value(data->pdfPath).toString() != okularPath)) {
     data->st->setValue("notFirstTime", "not first time");
     data->st->setValue(data->wordPath, libreOfficePath);
     data->st->setValue(data->excelPath, libreOfficePath);
     data->st->setValue(data->pptPath, libreOfficePath);
+    data->st->setValue(data->archivesPath, arkPath);
+    data->st->setValue(data->pdfPath, okularPath);
   }
 #endif
   history.append(data->db->getRootDataBrick());

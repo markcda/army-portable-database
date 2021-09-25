@@ -40,6 +40,8 @@ private:
   const QString pptPath = "pptPath";
   const QString visioPath = "visioPath";
   const QString libreOfficePath = "/usr/bin/libreoffice";
+  const QString arkPath = "/usr/bin/ark";
+  const QString okularPath = "/usr/bin/okular";
   // Объекты:
   Data *data = nullptr;
   Exporter *exporter = nullptr;

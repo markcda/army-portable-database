@@ -42,6 +42,7 @@ private:
   const QString libreOfficePath = "/usr/bin/libreoffice";
   const QString arkPath = "/usr/bin/ark";
   const QString okularPath = "/usr/bin/okular";
+  const QString D2DACCBackgroundStyleSheet = "#docwindow { background-image: url(:/arts/480/background.png); background-position: center center; background-attachment: fixed; background-origin: content; background-repeat: no-repeat;";
   // Объекты:
   Data *data = nullptr;
   Exporter *exporter = nullptr;

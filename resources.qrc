@@ -13,5 +13,6 @@
         <file>arts/16/view-hidden.svg</file>
         <file>arts/64/datamodeler.svg</file>
         <file>arts/16/edit-find.svg</file>
+        <file>arts/480/background.png</file>
     </qresource>
 </RCC>

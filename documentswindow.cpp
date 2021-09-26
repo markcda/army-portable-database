@@ -3,6 +3,10 @@
 
 DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));
+  setMinimumWidth(850);
+  setMinimumHeight(500);
+  setObjectName("docwindow");
+  setStyleSheet(D2DACCBackgroundStyleSheet + " }");
   auto flags = windowFlags();
   flags = flags ^ Qt::WindowCloseButtonHint;
   setWindowFlags(flags);
@@ -95,6 +99,13 @@ void DocumentsWindow::autosaveLoop() {
 void DocumentsWindow::drawNode() {
   auto *nsa = new QScrollArea(this);
   auto *brick = history.last();
+  if (brick == data->db->getArchiveDataBrick() or brick == data->db->getRootDataBrick())
+    setStyleSheet(D2DACCBackgroundStyleSheet + " }");
+  else setStyleSheet(D2DACCBackgroundStyleSheet + "background-color: rgba(" +
+                QString::number(brick->brickColor.red()) + ", " +
+                QString::number(brick->brickColor.green()) + ", " +
+                QString::number(brick->brickColor.blue()) +
+                ", 0.2); }");
   setWindowTitle(brick->name);
   setUpdatesEnabled(false);
   int scrollPercentage = 0;

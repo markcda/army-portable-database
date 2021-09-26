@@ -15,16 +15,16 @@ DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
                 QString::number(document->textColor.red()) + ", " +
                 QString::number(document->textColor.green()) + ", " +
                 QString::number(document->textColor.blue()) +
-                "); background-color: rgb(" +
+                "); background-color: rgba(" +
                 QString::number(document->backgroundColor.red()) + ", " +
                 QString::number(document->backgroundColor.green()) + ", " +
                 QString::number(document->backgroundColor.blue()) +
-                "); border-radius: 8px;} #" + LR_OBJNAME +
+                ", 0.85); border-radius: 8px;} #" + LR_OBJNAME +
                 " { background-color: rgba(" +
                 QString::number(document->backgroundColor.red()) + ", " +
                 QString::number(document->backgroundColor.green()) + ", " +
                 QString::number(document->backgroundColor.blue()) +
-                ", 60); border-radius: 8px;}");
+                ", 0.6); border-radius: 8px;}");
   auto *lt = new QHBoxLayout();
   lt->setContentsMargins(0, 0, 6, 0);
   auto *lbl = new QLabel(this);

@@ -55,7 +55,7 @@ AddDocumentDialog::AddDocumentDialog(QWidget *parent) : QDialog(parent) {
 void AddDocumentDialog::selectFile() {
   docPath = QFileDialog::getOpenFileName(
       this, "Открыть программу", QDir::homePath(),
-      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.zip *.7z *.pdf)");
+      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* *.zip *.7z *.pdf)");
   pathBtn->setText(QFontMetrics(pathBtn->font())
                        .elidedText(docPath, Qt::ElideLeft, pathBtn->width()));
   if (nameLine->text().isEmpty())

@@ -92,8 +92,9 @@ void DocumentWidget::openDocumentInApp() {
   else if (document->filePath.toLower().endsWith(".vsd"))
     process->setProgram(data->st->value(data->visioPath).toString());
   else if (document->filePath.toLower().endsWith(".rar") or
-           document->filePath.toLower().endsWith(".zip")or
-           document->filePath.toLower().endsWith(".7z"))
+           document->filePath.toLower().endsWith(".zip") or
+           document->filePath.toLower().endsWith(".7z") or
+           document->filePath.toLower().contains(".tar."))
     process->setProgram(data->st->value(data->archivesPath).toString());
   else if (document->filePath.toLower().endsWith(".pdf"))
     process->setProgram(data->st->value(data->pdfPath).toString());

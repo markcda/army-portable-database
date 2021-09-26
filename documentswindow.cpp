@@ -1,5 +1,4 @@
 #include "documentswindow.h"
-#include <iostream>
 
 DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowIcon(QIcon(":/arts/64/datamodeler.svg"));

@@ -1,5 +1,4 @@
 #include "exporter.h"
-#include <iostream>
 
 Exporter::Exporter(Data *_data, QObject *parent) : QObject(parent) {
   data = _data;

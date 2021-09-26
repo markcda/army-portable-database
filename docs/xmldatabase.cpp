@@ -1,5 +1,4 @@
 #include "xmldatabase.h"
-#include <iostream>
 
 XMLDataBase::XMLDataBase(QString directoryPath) {
   dbDirectory = directoryPath;

@@ -35,14 +35,17 @@ public:
 
 private:
   // Константы:
-  const QString wordPath = "wordPath";
-  const QString excelPath = "excelPath";
-  const QString pptPath = "pptPath";
-  const QString visioPath = "visioPath";
   const QString libreOfficePath = "/usr/bin/libreoffice";
   const QString arkPath = "/usr/bin/ark";
   const QString okularPath = "/usr/bin/okular";
-  const QString D2DACCBackgroundStyleSheet = "#docwindow { background-image: url(:/arts/480/background.png); background-position: center center; background-attachment: fixed; background-origin: content; background-repeat: no-repeat;";
+  
+  const QString lastPathKey = "lastPath";
+  
+  const QString D2DACCBackgroundStyleSheet = "#docwindow { background-image:" 
+      "url(:/arts/480/background.png); background-position: center center;"
+      "background-attachment: fixed; background-origin: content; background-"
+      "repeat: no-repeat;";
+  
   // Объекты:
   Data *data = nullptr;
   Exporter *exporter = nullptr;
@@ -53,6 +56,7 @@ private:
   QScrollArea *sa = nullptr;
   QMutex *autosaveMutex = new QMutex();
   int *changeNum = new int(0);
+  
   // Методы:
   void drawNode();
   QWidget *getBottomToolBar();
@@ -73,6 +77,7 @@ private:
   void importDb();
   void openSearchDialog();
   void autosaveLoop();
+  void saveLastDir(QString lastDir);
   virtual void closeEvent(QCloseEvent *event);
 };
 #endif

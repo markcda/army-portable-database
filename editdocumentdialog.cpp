@@ -64,9 +64,12 @@ EditDocumentDialog::EditDocumentDialog(Document *_document, QWidget *parent)
 }
 
 void EditDocumentDialog::selectFile() {
+  auto dirPath = document->filePath;
+  dirPath.truncate(dirPath.lastIndexOf(QDir::separator()));
   document->filePath = QFileDialog::getOpenFileName(
-      this, "Открыть программу", "",
-      "Документы MS Office (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd)");
+      this, "Открыть программу", dirPath,
+      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* "
+      "*.zip *.7z *.pdf)");
   pathBtn->setText(
       QFontMetrics(pathBtn->font())
           .elidedText(document->filePath, Qt::ElideLeft, pathBtn->width()));

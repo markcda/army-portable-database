@@ -17,9 +17,11 @@
 class AddDocumentDialog : public QDialog {
   Q_OBJECT
 public:
-  AddDocumentDialog(QWidget *parent = nullptr);
+  AddDocumentDialog(QString _lastPath, QWidget *parent = nullptr);
+  
 signals:
   Document *sendResult(Document *document);
+  QString sendLastDir(QString lastPath);
 
 private:
   Document *getDocument();
@@ -31,6 +33,7 @@ private:
   QDateTimeEdit *dateOfExpire = nullptr;
   void selectFile();
   QString docPath;
+  QString lastPath;
   QColor getColorFromIndex(int index) {
     if (index == 0)
       return QColor::fromRgb(255, 255, 255);

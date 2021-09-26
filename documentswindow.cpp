@@ -25,7 +25,7 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
        not data->st->value(data->pptPath)
                .toString()
                .toLower()
-               .contains("exe") and 
+               .contains("exe") and
        not data->st->value(data->archivesPath)
                .toString()
                .toLower()
@@ -92,19 +92,23 @@ DocumentsWindow::~DocumentsWindow() {
 }
 
 void DocumentsWindow::autosaveLoop() {
-  QTimer::singleShot(60000, this, [this]() { saveDb(); autosaveLoop(); });
+  QTimer::singleShot(60000, this, [this]() {
+    saveDb();
+    autosaveLoop();
+  });
 }
 
 void DocumentsWindow::drawNode() {
   auto *nsa = new QScrollArea(this);
   auto *brick = history.last();
-  if (brick == data->db->getArchiveDataBrick() or brick == data->db->getRootDataBrick())
+  if (brick == data->db->getArchiveDataBrick() or
+      brick == data->db->getRootDataBrick())
     setStyleSheet(D2DACCBackgroundStyleSheet + " }");
-  else setStyleSheet(D2DACCBackgroundStyleSheet + "background-color: rgba(" +
-                QString::number(brick->brickColor.red()) + ", " +
-                QString::number(brick->brickColor.green()) + ", " +
-                QString::number(brick->brickColor.blue()) +
-                ", 0.2); }");
+  else
+    setStyleSheet(D2DACCBackgroundStyleSheet + "background-color: rgba(" +
+                  QString::number(brick->brickColor.red()) + ", " +
+                  QString::number(brick->brickColor.green()) + ", " +
+                  QString::number(brick->brickColor.blue()) + ", 0.2); }");
   setWindowTitle(brick->name);
   setUpdatesEnabled(false);
   int scrollPercentage = 0;
@@ -123,7 +127,8 @@ void DocumentsWindow::drawNode() {
           &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments) {
-    auto *d = new DocumentWidget(doc, brick, data, autosaveMutex, changeNum, nsa);
+    auto *d =
+        new DocumentWidget(doc, brick, data, autosaveMutex, changeNum, nsa);
     connect(d, &DocumentWidget::removed, this,
             &DocumentsWindow::removeDocument);
     connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
@@ -239,13 +244,20 @@ void DocumentsWindow::processNode(DataBrick *dataBrick) {
 void DocumentsWindow::addDocument() {
   if (not autosaveMutex->tryLock(3000))
     return;
-  auto *addDocumentDialog = new AddDocumentDialog(this);
+  auto *addDocumentDialog =
+      new AddDocumentDialog(data->st->value(lastPathKey).toString(), this);
   connect(addDocumentDialog, &AddDocumentDialog::sendResult, this,
           &DocumentsWindow::processDocument);
+  connect(addDocumentDialog, &AddDocumentDialog::sendLastDir, this,
+          &DocumentsWindow::saveLastDir);
   addDocumentDialog->exec();
   if (addDocumentDialog->result() == QDialog::Accepted)
     *changeNum += 1;
   autosaveMutex->unlock();
+}
+
+void DocumentsWindow::saveLastDir(QString lastDir) {
+  data->st->setValue(lastPathKey, lastDir);
 }
 
 void DocumentsWindow::processDocument(Document *document) {
@@ -326,7 +338,8 @@ void DocumentsWindow::importDb() {
 void DocumentsWindow::closeEvent(QCloseEvent *event) { event->ignore(); }
 
 void DocumentsWindow::openSearchDialog() {
-  auto *sd = new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
+  auto *sd =
+      new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
   connect(sd, &SearchDialog::openNodeInDW, this, &DocumentsWindow::goNode);
   sd->exec();
   drawNode();

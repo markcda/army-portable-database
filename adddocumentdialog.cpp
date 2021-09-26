@@ -1,6 +1,8 @@
 #include "adddocumentdialog.h"
 
-AddDocumentDialog::AddDocumentDialog(QWidget *parent) : QDialog(parent) {
+AddDocumentDialog::AddDocumentDialog(QString _lastPath, QWidget *parent)
+    : QDialog(parent) {
+  lastPath = _lastPath;
   setWindowTitle("Добавить документ");
   setModal(true);
   auto *lt = new QGridLayout();
@@ -54,8 +56,13 @@ AddDocumentDialog::AddDocumentDialog(QWidget *parent) : QDialog(parent) {
 
 void AddDocumentDialog::selectFile() {
   docPath = QFileDialog::getOpenFileName(
-      this, "Открыть программу", QDir::homePath(),
-      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* *.zip *.7z *.pdf)");
+      this, "Открыть программу",
+      lastPath.isEmpty() ? QDir::homePath() : lastPath,
+      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* "
+      "*.zip *.7z *.pdf)");
+  lastPath = docPath;
+  lastPath.truncate(lastPath.lastIndexOf(QDir::separator()));
+  emit sendLastDir(lastPath);
   pathBtn->setText(QFontMetrics(pathBtn->font())
                        .elidedText(docPath, Qt::ElideLeft, pathBtn->width()));
   if (nameLine->text().isEmpty())

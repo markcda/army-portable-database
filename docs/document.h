@@ -7,6 +7,10 @@
 #include <QString>
 #include <QUuid>
 
+inline const static QString fileDialogDocsString =
+    "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* "
+    "*.zip *.7z *.pdf *.jpg *.jpeg *.tiff *.png *.bmp *.gif *.mp4)";
+
 /*!
  * @struct Document
  * @brief Структура для хранения данных о документах.

@@ -20,6 +20,8 @@ public:
   const QString visioPath = "visioPath";
   const QString archivesPath = "archivesPath";
   const QString pdfPath = "pdfPath";
+  const QString imagesPath = "imagesPath";
+  const QString videosPath = "videosPath";
   // Методы:
   QString getSettingsFileDirectoryPath(QSettings *settings);
 

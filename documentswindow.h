@@ -38,6 +38,8 @@ private:
   const QString libreOfficePath = "/usr/bin/libreoffice";
   const QString arkPath = "/usr/bin/ark";
   const QString okularPath = "/usr/bin/okular";
+  const QString gwenviewPath = "/usr/bin/gwenview";
+  const QString vlcPath = "/usr/bin/vlc";
   
   const QString lastPathKey = "lastPath";
   

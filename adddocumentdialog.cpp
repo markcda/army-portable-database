@@ -57,9 +57,7 @@ AddDocumentDialog::AddDocumentDialog(QString _lastPath, QWidget *parent)
 void AddDocumentDialog::selectFile() {
   docPath = QFileDialog::getOpenFileName(
       this, "Открыть программу",
-      lastPath.isEmpty() ? QDir::homePath() : lastPath,
-      "Документы (*.doc *.docx *.xls *.xlsx *.ppt *.pptx *.vsd *.rar *.tar.* "
-      "*.zip *.7z *.pdf)");
+      lastPath.isEmpty() ? QDir::homePath() : lastPath, fileDialogDocsString);
   lastPath = docPath;
   lastPath.truncate(lastPath.lastIndexOf(QDir::separator()));
   emit sendLastDir(lastPath);

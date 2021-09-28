@@ -33,6 +33,14 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
        not data->st->value(data->pdfPath)
                .toString()
                .toLower()
+               .contains("exe") and
+       not data->st->value(data->imagesPath)
+               .toString()
+               .toLower()
+               .contains("dll") and
+       not data->st->value(data->videosPath)
+               .toString()
+               .toLower()
                .contains("exe"))) {
     (new FirstTimeSetupDialog(data, this))->exec();
     data->st->setValue("notFirstTime", "not first time");
@@ -43,13 +51,17 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
        data->st->value(data->excelPath).toString() != libreOfficePath or
        data->st->value(data->pptPath).toString() != libreOfficePath or
        data->st->value(data->archivesPath).toString() != arkPath or
-       data->st->value(data->pdfPath).toString() != okularPath)) {
+       data->st->value(data->pdfPath).toString() != okularPath or
+       data->st->value(data->imagesPath).toString() != gwenviewPath or
+       data->st->value(data->videosPath).toString() != vlcPath)) {
     data->st->setValue("notFirstTime", "not first time");
     data->st->setValue(data->wordPath, libreOfficePath);
     data->st->setValue(data->excelPath, libreOfficePath);
     data->st->setValue(data->pptPath, libreOfficePath);
     data->st->setValue(data->archivesPath, arkPath);
     data->st->setValue(data->pdfPath, okularPath);
+    data->st->setValue(data->imagesPath, gwenviewPath);
+    data->st->setValue(data->videosPath, vlcPath);
   }
 #endif
   history.append(data->db->getRootDataBrick());
@@ -100,6 +112,7 @@ void DocumentsWindow::autosaveLoop() {
 
 void DocumentsWindow::drawNode() {
   auto *nsa = new QScrollArea(this);
+  nsa->setStyleSheet("QScrollArea, #dw { background: transparent; }");
   auto *brick = history.last();
   if (brick == data->db->getArchiveDataBrick() or
       brick == data->db->getRootDataBrick())
@@ -121,6 +134,8 @@ void DocumentsWindow::drawNode() {
   nsa->setFrameShape(QFrame::NoFrame);
   nsa->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   auto *dw = new QWidget(nsa);
+  dw->setObjectName("dw");
+  dw->setAttribute(Qt::WA_NoSystemBackground);
   auto *docsLt = new QVBoxLayout();
   auto *nodes = new NodesCollection(brick->brickNodes, this);
   connect(nodes, &NodesCollection::openDataBrick, this,

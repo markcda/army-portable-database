@@ -15,7 +15,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   wordLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(wordLbl, 0, 0);
   wordBtn = new QPushButton(this);
-  wordBtn->setText(noPath);
+  wordBtn->setText(data->st->value(data->wordPath).toString().isEmpty()
+                       ? noPath
+                       : data->st->value(data->wordPath).toString());
   connect(wordBtn, &QPushButton::clicked, this, [this]() {
     MSWord = getPath(DocumentType::MSWord);
     wordBtn->setText(QFontMetrics(wordBtn->font())
@@ -29,7 +31,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   excelLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(excelLbl, 1, 0);
   excelBtn = new QPushButton(this);
-  excelBtn->setText(noPath);
+  excelBtn->setText(data->st->value(data->excelPath).toString().isEmpty()
+                        ? noPath
+                        : data->st->value(data->excelPath).toString());
   connect(excelBtn, &QPushButton::clicked, this, [this]() {
     MSExcel = getPath(DocumentType::MSExcel);
     excelBtn->setText(
@@ -44,7 +48,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   ppLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(ppLbl, 2, 0);
   ppBtn = new QPushButton(this);
-  ppBtn->setText(noPath);
+  ppBtn->setText(data->st->value(data->pptPath).toString().isEmpty()
+                     ? noPath
+                     : data->st->value(data->pptPath).toString());
   connect(ppBtn, &QPushButton::clicked, this, [this]() {
     MSPP = getPath(DocumentType::MSPowerPoint);
     ppBtn->setText(QFontMetrics(ppBtn->font())
@@ -58,7 +64,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   visioLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(visioLbl, 3, 0);
   visioBtn = new QPushButton(this);
-  visioBtn->setText(noPath);
+  visioBtn->setText(data->st->value(data->visioPath).toString().isEmpty()
+                        ? noPath
+                        : data->st->value(data->visioPath).toString());
   connect(visioBtn, &QPushButton::clicked, this, [this]() {
     MSVisio = getPath(DocumentType::MSVisio);
     visioBtn->setText(
@@ -72,7 +80,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   winRarLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(winRarLbl, 4, 0);
   winRarBtn = new QPushButton(this);
-  winRarBtn->setText(noPath);
+  winRarBtn->setText(data->st->value(data->archivesPath).toString().isEmpty()
+                         ? noPath
+                         : data->st->value(data->archivesPath).toString());
   connect(winRarBtn, &QPushButton::clicked, this, [this]() {
     WinRar = getPath(DocumentType::WinRar);
     winRarBtn->setText(
@@ -86,7 +96,9 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   adobeAcrobatLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(adobeAcrobatLbl, 5, 0);
   adobeAcrobatBtn = new QPushButton(this);
-  adobeAcrobatBtn->setText(noPath);
+  adobeAcrobatBtn->setText(data->st->value(data->pdfPath).toString().isEmpty()
+                               ? noPath
+                               : data->st->value(data->pdfPath).toString());
   connect(adobeAcrobatBtn, &QPushButton::clicked, this, [this]() {
     AdobeAcrobat = getPath(DocumentType::AdobeAcrobat);
     adobeAcrobatBtn->setText(
@@ -105,11 +117,8 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
 }
 
 void FirstTimeSetupDialog::updateAcceptEnabled() {
-  if (MSWord.isEmpty() or 
-    MSPP.isEmpty() or 
-    MSExcel.isEmpty() or 
-    WinRar.isEmpty() or 
-    AdobeAcrobat.isEmpty())
+  if (MSWord.isEmpty() or MSPP.isEmpty() or MSExcel.isEmpty() or
+      WinRar.isEmpty() or AdobeAcrobat.isEmpty())
     acceptBtn->setEnabled(false);
   else
     acceptBtn->setEnabled(true);
@@ -154,5 +163,10 @@ void FirstTimeSetupDialog::saveAll() {
   data->st->setValue(data->visioPath, MSVisio);
   data->st->setValue(data->archivesPath, WinRar);
   data->st->setValue(data->pdfPath, AdobeAcrobat);
+  data->st->setValue(
+      data->imagesPath,
+      "rundll32.exe C:\\WINDOWS\\System32\\shimgvw.dll,ImageView_Fillscreen");
+  data->st->setValue(data->videosPath,
+                     "C:\\Program Files\\Windows Media Player\\wmplayer.exe");
   close();
 }

@@ -98,6 +98,15 @@ void DocumentWidget::openDocumentInApp() {
     process->setProgram(data->st->value(data->archivesPath).toString());
   else if (document->filePath.toLower().endsWith(".pdf"))
     process->setProgram(data->st->value(data->pdfPath).toString());
+  else if (document->filePath.toLower().endsWith(".jpg") or
+           document->filePath.toLower().endsWith(".jpeg") or
+           document->filePath.toLower().endsWith(".tiff") or
+           document->filePath.toLower().endsWith(".png") or
+           document->filePath.toLower().endsWith(".bmp") or
+           document->filePath.toLower().endsWith(".gif"))
+    process->setProgram(data->st->value(data->imagesPath).toString());
+  else if (document->filePath.toLower().endsWith(".mp4"))
+    process->setProgram(data->st->value(data->videosPath).toString());
 #ifdef Q_OS_WINDOWS
   QString path = QDir::toNativeSeparators(document->filePath);
   process->setNativeArguments("\"" + path + "\"");

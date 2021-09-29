@@ -5,6 +5,24 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   data = _data;
   setWindowTitle("Первый запуск");
   setModal(true);
+  MSWord = data->st->value(data->wordPath).toString().isEmpty()
+               ? noPath
+               : data->st->value(data->wordPath).toString();
+  MSVisio = data->st->value(data->visioPath).toString().isEmpty()
+                ? noPath
+                : data->st->value(data->visioPath).toString();
+  MSPP = data->st->value(data->pptPath).toString().isEmpty()
+             ? noPath
+             : data->st->value(data->pptPath).toString();
+  MSExcel = data->st->value(data->excelPath).toString().isEmpty()
+                ? noPath
+                : data->st->value(data->excelPath).toString();
+  WinRar = data->st->value(data->archivesPath).toString().isEmpty()
+               ? noPath
+               : data->st->value(data->archivesPath).toString();
+  AdobeAcrobat = data->st->value(data->pdfPath).toString().isEmpty()
+                     ? noPath
+                     : data->st->value(data->pdfPath).toString();
   auto *vblt = new QVBoxLayout();
   auto *group = new QGroupBox(this);
   group->setTitle("Пути к приложениям Microsoft Office");
@@ -15,9 +33,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   wordLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(wordLbl, 0, 0);
   wordBtn = new QPushButton(this);
-  wordBtn->setText(data->st->value(data->wordPath).toString().isEmpty()
-                       ? noPath
-                       : data->st->value(data->wordPath).toString());
+  wordBtn->setText(MSWord);
   connect(wordBtn, &QPushButton::clicked, this, [this]() {
     MSWord = getPath(DocumentType::MSWord);
     wordBtn->setText(QFontMetrics(wordBtn->font())
@@ -31,9 +47,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   excelLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(excelLbl, 1, 0);
   excelBtn = new QPushButton(this);
-  excelBtn->setText(data->st->value(data->excelPath).toString().isEmpty()
-                        ? noPath
-                        : data->st->value(data->excelPath).toString());
+  excelBtn->setText(MSExcel);
   connect(excelBtn, &QPushButton::clicked, this, [this]() {
     MSExcel = getPath(DocumentType::MSExcel);
     excelBtn->setText(
@@ -48,9 +62,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   ppLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(ppLbl, 2, 0);
   ppBtn = new QPushButton(this);
-  ppBtn->setText(data->st->value(data->pptPath).toString().isEmpty()
-                     ? noPath
-                     : data->st->value(data->pptPath).toString());
+  ppBtn->setText(MSPP);
   connect(ppBtn, &QPushButton::clicked, this, [this]() {
     MSPP = getPath(DocumentType::MSPowerPoint);
     ppBtn->setText(QFontMetrics(ppBtn->font())
@@ -64,9 +76,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   visioLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(visioLbl, 3, 0);
   visioBtn = new QPushButton(this);
-  visioBtn->setText(data->st->value(data->visioPath).toString().isEmpty()
-                        ? noPath
-                        : data->st->value(data->visioPath).toString());
+  visioBtn->setText(MSVisio);
   connect(visioBtn, &QPushButton::clicked, this, [this]() {
     MSVisio = getPath(DocumentType::MSVisio);
     visioBtn->setText(
@@ -80,9 +90,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   winRarLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(winRarLbl, 4, 0);
   winRarBtn = new QPushButton(this);
-  winRarBtn->setText(data->st->value(data->archivesPath).toString().isEmpty()
-                         ? noPath
-                         : data->st->value(data->archivesPath).toString());
+  winRarBtn->setText(WinRar);
   connect(winRarBtn, &QPushButton::clicked, this, [this]() {
     WinRar = getPath(DocumentType::WinRar);
     winRarBtn->setText(
@@ -96,9 +104,7 @@ FirstTimeSetupDialog::FirstTimeSetupDialog(Data *_data, QWidget *parent)
   adobeAcrobatLbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   glt->addWidget(adobeAcrobatLbl, 5, 0);
   adobeAcrobatBtn = new QPushButton(this);
-  adobeAcrobatBtn->setText(data->st->value(data->pdfPath).toString().isEmpty()
-                               ? noPath
-                               : data->st->value(data->pdfPath).toString());
+  adobeAcrobatBtn->setText(AdobeAcrobat);
   connect(adobeAcrobatBtn, &QPushButton::clicked, this, [this]() {
     AdobeAcrobat = getPath(DocumentType::AdobeAcrobat);
     adobeAcrobatBtn->setText(

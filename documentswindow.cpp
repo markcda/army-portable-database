@@ -17,27 +17,27 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
       (not data->st->value(data->wordPath)
                .toString()
                .toLower()
-               .contains("exe") and
+               .contains("exe") or
        not data->st->value(data->excelPath)
                .toString()
                .toLower()
-               .contains("exe") and
+               .contains("exe") or
        not data->st->value(data->pptPath)
                .toString()
                .toLower()
-               .contains("exe") and
+               .contains("exe") or
        not data->st->value(data->archivesPath)
                .toString()
                .toLower()
-               .contains("exe") and
+               .contains("exe") or
        not data->st->value(data->pdfPath)
                .toString()
                .toLower()
-               .contains("exe") and
+               .contains("exe") or
        not data->st->value(data->imagesPath)
                .toString()
                .toLower()
-               .contains("dll") and
+               .contains("dll") or
        not data->st->value(data->videosPath)
                .toString()
                .toLower()

@@ -34,10 +34,6 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
                .toString()
                .toLower()
                .contains("exe") or
-       not data->st->value(data->imagesPath)
-               .toString()
-               .toLower()
-               .contains("dll") or
        not data->st->value(data->videosPath)
                .toString()
                .toLower()

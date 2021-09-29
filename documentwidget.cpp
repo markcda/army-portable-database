@@ -1,7 +1,9 @@
 #include "documentwidget.h"
+#include "imageviewer.h"
 
 DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
-                               Data *_data, QMutex *mutex, int *changeNum, QWidget *parent)
+                               Data *_data, QMutex *mutex, int *changeNum,
+                               QWidget *parent)
     : QWidget(parent) {
   data = _data;
   brickParent = _brickParent;
@@ -78,42 +80,57 @@ DocumentWidget::DocumentWidget(Document *_document, DataBrick *_brickParent,
 }
 
 void DocumentWidget::openDocumentInApp() {
-  QStringList args;
-  auto *process = new QProcess(parent());
-  if (document->filePath.toLower().endsWith(".doc") or
-      document->filePath.toLower().endsWith(".docx"))
-    process->setProgram(data->st->value(data->wordPath).toString());
-  else if (document->filePath.toLower().endsWith(".xls") or
-           document->filePath.toLower().endsWith(".xlsx"))
-    process->setProgram(data->st->value(data->excelPath).toString());
-  else if (document->filePath.toLower().endsWith(".ppt") or
-           document->filePath.toLower().endsWith(".pptx"))
-    process->setProgram(data->st->value(data->pptPath).toString());
-  else if (document->filePath.toLower().endsWith(".vsd"))
-    process->setProgram(data->st->value(data->visioPath).toString());
-  else if (document->filePath.toLower().endsWith(".rar") or
-           document->filePath.toLower().endsWith(".zip") or
-           document->filePath.toLower().endsWith(".7z") or
-           document->filePath.toLower().contains(".tar."))
-    process->setProgram(data->st->value(data->archivesPath).toString());
-  else if (document->filePath.toLower().endsWith(".pdf"))
-    process->setProgram(data->st->value(data->pdfPath).toString());
-  else if (document->filePath.toLower().endsWith(".jpg") or
-           document->filePath.toLower().endsWith(".jpeg") or
-           document->filePath.toLower().endsWith(".tiff") or
-           document->filePath.toLower().endsWith(".png") or
-           document->filePath.toLower().endsWith(".bmp") or
-           document->filePath.toLower().endsWith(".gif"))
-    process->setProgram(data->st->value(data->imagesPath).toString());
-  else if (document->filePath.toLower().endsWith(".mp4"))
-    process->setProgram(data->st->value(data->videosPath).toString());
+// #ifdef Q_OS_WINDOWS
+  if (not document->filePath.toLower().endsWith(".jpg") and
+      not document->filePath.toLower().endsWith(".jpeg") and
+      not document->filePath.toLower().endsWith(".tiff") and
+      not document->filePath.toLower().endsWith(".png") and
+      not document->filePath.toLower().endsWith(".bmp") and
+      not document->filePath.toLower().endsWith(".gif")) {
+// #endif
+    QStringList args;
+    auto *process = new QProcess(parent());
+    if (document->filePath.toLower().endsWith(".doc") or
+        document->filePath.toLower().endsWith(".docx"))
+      process->setProgram(data->st->value(data->wordPath).toString());
+    else if (document->filePath.toLower().endsWith(".xls") or
+             document->filePath.toLower().endsWith(".xlsx"))
+      process->setProgram(data->st->value(data->excelPath).toString());
+    else if (document->filePath.toLower().endsWith(".ppt") or
+             document->filePath.toLower().endsWith(".pptx"))
+      process->setProgram(data->st->value(data->pptPath).toString());
+    else if (document->filePath.toLower().endsWith(".vsd"))
+      process->setProgram(data->st->value(data->visioPath).toString());
+    else if (document->filePath.toLower().endsWith(".rar") or
+             document->filePath.toLower().endsWith(".zip") or
+             document->filePath.toLower().endsWith(".7z") or
+             document->filePath.toLower().contains(".tar."))
+      process->setProgram(data->st->value(data->archivesPath).toString());
+    else if (document->filePath.toLower().endsWith(".pdf"))
+      process->setProgram(data->st->value(data->pdfPath).toString());
+    else if (document->filePath.toLower().endsWith(".jpg") or
+             document->filePath.toLower().endsWith(".jpeg") or
+             document->filePath.toLower().endsWith(".tiff") or
+             document->filePath.toLower().endsWith(".png") or
+             document->filePath.toLower().endsWith(".bmp") or
+             document->filePath.toLower().endsWith(".gif"))
+      process->setProgram(data->st->value(data->imagesPath).toString());
+    else if (document->filePath.toLower().endsWith(".mp4"))
+      process->setProgram(data->st->value(data->videosPath).toString());
 #ifdef Q_OS_WINDOWS
-  QString path = QDir::toNativeSeparators(document->filePath);
-  process->setNativeArguments("\"" + path + "\"");
+    QString path = QDir::toNativeSeparators(document->filePath);
+    process->setNativeArguments("\"" + path + "\"");
 #else
   process->setArguments({document->filePath});
 #endif
-  process->start();
+    process->start();
+// #ifdef Q_OS_WINDOWS
+  } else {
+    auto *imageViewer = new ImageViewer(this);
+    imageViewer->loadFile(document->filePath);
+    imageViewer->show();
+  }
+// #endif
 }
 
 void DocumentWidget::editDocument() {

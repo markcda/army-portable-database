@@ -41,6 +41,8 @@ set (SRCS
     editnodedialog.h
     firsttimesetupdialog.cpp
     firsttimesetupdialog.h
+    imageviewer.cpp
+    imageviewer.h
     main.cpp
     movedialog.cpp
     movedialog.h

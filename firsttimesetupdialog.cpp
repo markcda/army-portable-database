@@ -169,9 +169,6 @@ void FirstTimeSetupDialog::saveAll() {
   data->st->setValue(data->visioPath, MSVisio);
   data->st->setValue(data->archivesPath, WinRar);
   data->st->setValue(data->pdfPath, AdobeAcrobat);
-  data->st->setValue(
-      data->imagesPath,
-      "rundll32.exe C:\\WINDOWS\\System32\\shimgvw.dll,ImageView_Fillscreen");
   data->st->setValue(data->videosPath,
                      "C:\\Program Files\\Windows Media Player\\wmplayer.exe");
   close();

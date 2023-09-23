@@ -257,7 +257,6 @@ QMap<int, QList<DataBrick *>> XMLDataBase::searchNodes(QString name, DataBrick *
   for (auto word : name.split(" ")) if (dataBrick->name.toLower().contains(word.toLower())) cntr++;
   if (cntr) nodes[cntr].append(dataBrick);
   for (auto *childBrick : dataBrick->brickNodes) {
-    std::cout << "we are here: checking " << dataBrick->name.toStdString() << " nodes" << std::endl;
     QMap<int, QList<DataBrick *>> new_nodes = XMLDataBase::searchNodes(name, childBrick);
     for (int i = new_nodes.size(); i > 0; i--) nodes[i].append(new_nodes[i]);
   }

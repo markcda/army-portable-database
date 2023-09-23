@@ -64,25 +64,16 @@ DocumentsWindow::DocumentsWindow(QWidget *parent) : QMainWindow(parent) {
   auto *cw = new QWidget(this);
   mainLt = new QVBoxLayout();
   navBar = new NavBar();
-  connect(navBar->backBtn, &QToolButton::clicked, this,
-          &DocumentsWindow::goBack);
-  connect(navBar->mainBtn, &QToolButton::clicked, this,
-          &DocumentsWindow::goFirst);
-  connect(navBar->searchBtn, &QToolButton::clicked, this,
-          &DocumentsWindow::openSearchDialog);
-  connect(navBar->archiveBtn, &QToolButton::clicked, this,
-          &DocumentsWindow::goArchive);
-  connect(navBar->editNode, &QAction::triggered, this,
-          &DocumentsWindow::editNode);
-  connect(navBar->moveNode, &QAction::triggered, this,
-          &DocumentsWindow::moveNode);
-  connect(navBar->removeNodeBtn, &QToolButton::clicked, this,
-          &DocumentsWindow::removeNode);
+  connect(navBar->backBtn, &QToolButton::clicked, this, &DocumentsWindow::goBack);
+  connect(navBar->mainBtn, &QToolButton::clicked, this, &DocumentsWindow::goFirst);
+  connect(navBar->searchBtn, &QToolButton::clicked, this, &DocumentsWindow::openSearchDialog);
+  connect(navBar->archiveBtn, &QToolButton::clicked, this, &DocumentsWindow::goArchive);
+  connect(navBar->editNode, &QAction::triggered, this, &DocumentsWindow::editNode);
+  connect(navBar->moveNode, &QAction::triggered, this, &DocumentsWindow::moveNode);
+  connect(navBar->removeNodeBtn, &QToolButton::clicked, this, &DocumentsWindow::removeNode);
   connect(navBar->saveDb, &QAction::triggered, this, &DocumentsWindow::saveDb);
-  connect(navBar->exportDb, &QAction::triggered, this,
-          &DocumentsWindow::exportDb);
-  connect(navBar->importDb, &QAction::triggered, this,
-          &DocumentsWindow::importDb);
+  connect(navBar->exportDb, &QAction::triggered, this, &DocumentsWindow::exportDb);
+  connect(navBar->importDb, &QAction::triggered, this, &DocumentsWindow::importDb);
   mainLt->addWidget(navBar);
   sa = new QScrollArea(cw);
   mainLt->addWidget(sa);
@@ -110,19 +101,22 @@ void DocumentsWindow::drawNode() {
   auto *nsa = new QScrollArea(this);
   nsa->setStyleSheet("QScrollArea, #dw { background: transparent; }");
   auto *brick = history.last();
-  if (brick == data->db->getArchiveDataBrick() or
-      brick == data->db->getRootDataBrick())
+//  setStyleSheet(D2DACCBackgroundStyleSheet + " }");
+//  setStyleSheet(D2DACCBackgroundStyleSheet + "background-color: rgba(" +
+//                  QString::number(brick->brickColor.red()) + ", " +
+//                  QString::number(brick->brickColor.green()) + ", " +
+//                  QString::number(brick->brickColor.blue()) + ", 1); }");
+  if (brick == data->db->getArchiveDataBrick() or brick == data->db->getRootDataBrick())
     setStyleSheet(D2DACCBackgroundStyleSheet + " }");
   else
     setStyleSheet(D2DACCBackgroundStyleSheet + "background-color: rgba(" +
                   QString::number(brick->brickColor.red()) + ", " +
                   QString::number(brick->brickColor.green()) + ", " +
-                  QString::number(brick->brickColor.blue()) + ", 0.2); }");
+                  QString::number(brick->brickColor.blue()) + ", 1); }");
   setWindowTitle(brick->name);
   setUpdatesEnabled(false);
   int scrollPercentage = 0;
-  if (sa)
-    scrollPercentage = sa->verticalScrollBar()->value();
+  if (sa) scrollPercentage = sa->verticalScrollBar()->value();
   navBar->update(history.length(), data->db, brick);
   navBar->lbl->setText(brick->name);
   bottomToolBar->setHidden(brick == data->db->getArchiveDataBrick());
@@ -134,25 +128,20 @@ void DocumentsWindow::drawNode() {
   dw->setAttribute(Qt::WA_NoSystemBackground);
   auto *docsLt = new QVBoxLayout();
   auto *nodes = new NodesCollection(brick->brickNodes, this);
-  connect(nodes, &NodesCollection::openDataBrick, this,
-          &DocumentsWindow::goNode);
+  connect(nodes, &NodesCollection::openDataBrick, this, &DocumentsWindow::goNode);
   docsLt->addWidget(nodes);
   for (auto *doc : brick->brickDocuments) {
-    auto *d =
-        new DocumentWidget(doc, brick, data, autosaveMutex, changeNum, nsa);
-    connect(d, &DocumentWidget::removed, this,
-            &DocumentsWindow::removeDocument);
+    auto *d = new DocumentWidget(doc, brick, data, autosaveMutex, changeNum, nsa);
+    connect(d, &DocumentWidget::removed, this, &DocumentsWindow::removeDocument);
     connect(d, &DocumentWidget::edited, this, &DocumentsWindow::drawNode);
     docsLt->addWidget(d);
   }
-  docsLt->addItem(
-      new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
+  docsLt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
   dw->setLayout(docsLt);
   nsa->setWidget(dw);
   mainLt->replaceWidget(sa, nsa);
   nsa->verticalScrollBar()->setValue(scrollPercentage);
-  if (sa)
-    delete sa;
+  if (sa) delete sa;
   sa = nsa;
   setUpdatesEnabled(true);
 }
@@ -168,8 +157,7 @@ QWidget *DocumentsWindow::getBottomToolBar() {
   auto *addDocumentBtn = new QPushButton(this);
   addDocumentBtn->setText("Добавить документ");
   addDocumentBtn->setIcon(QIcon(":/arts/16/list-add.svg"));
-  connect(addDocumentBtn, &QPushButton::clicked, this,
-          &DocumentsWindow::addDocument);
+  connect(addDocumentBtn, &QPushButton::clicked, this, &DocumentsWindow::addDocument);
   lt->addWidget(addDocumentBtn);
   w->setLayout(lt);
   return w;
@@ -193,43 +181,34 @@ void DocumentsWindow::goArchive() {
 }
 
 void DocumentsWindow::addNode() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (not autosaveMutex->tryLock(3000)) return;
   auto *addNodeDialog = new AddNodeDialog(data, this);
-  connect(addNodeDialog, &AddNodeDialog::sendResult, this,
-          &DocumentsWindow::processNode);
+  connect(addNodeDialog, &AddNodeDialog::sendResult, this, &DocumentsWindow::processNode);
   addNodeDialog->exec();
-  if (addNodeDialog->result() == QDialog::Accepted)
-    *changeNum += 1;
+  if (addNodeDialog->result() == QDialog::Accepted) *changeNum += 1;
   autosaveMutex->unlock();
 }
 
 void DocumentsWindow::editNode() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (not autosaveMutex->tryLock(3000)) return;
   auto *editNode = new EditNodeDialog(history.last(), this);
   editNode->exec();
-  if (editNode->result() == QDialog::Accepted)
-    *changeNum += 1;
+  if (editNode->result() == QDialog::Accepted) *changeNum += 1;
   autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::moveNode() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
-  auto *moveNode =
-      new MoveDialog(data, history.last(), history.last()->parent, this);
+  if (not autosaveMutex->tryLock(3000)) return;
+  auto *moveNode = new MoveDialog(data, history.last(), history.last()->parent, this);
   moveNode->exec();
-  if (moveNode->result() == QDialog::Accepted)
-    *changeNum += 1;
+  if (moveNode->result() == QDialog::Accepted) *changeNum += 1;
   autosaveMutex->unlock();
   drawNode();
 }
 
 void DocumentsWindow::removeNode() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (not autosaveMutex->tryLock(3000)) return;
   auto *node = history.last();
   auto *parentBrick = node->parent;
   for (int i = 0; i < parentBrick->brickNodes.length(); i++)
@@ -240,8 +219,7 @@ void DocumentsWindow::removeNode() {
     }
   history.removeLast();
   drawNode();
-  if (node)
-    delete node;
+  if (node) delete node;
   autosaveMutex->unlock();
 }
 
@@ -253,17 +231,12 @@ void DocumentsWindow::processNode(DataBrick *dataBrick) {
 }
 
 void DocumentsWindow::addDocument() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
-  auto *addDocumentDialog =
-      new AddDocumentDialog(data->st->value(lastPathKey).toString(), this);
-  connect(addDocumentDialog, &AddDocumentDialog::sendResult, this,
-          &DocumentsWindow::processDocument);
-  connect(addDocumentDialog, &AddDocumentDialog::sendLastDir, this,
-          &DocumentsWindow::saveLastDir);
+  if (not autosaveMutex->tryLock(3000)) return;
+  auto *addDocumentDialog = new AddDocumentDialog(data->st->value(lastPathKey).toString(), this);
+  connect(addDocumentDialog, &AddDocumentDialog::sendResult, this, &DocumentsWindow::processDocument);
+  connect(addDocumentDialog, &AddDocumentDialog::sendLastDir, this, &DocumentsWindow::saveLastDir);
   addDocumentDialog->exec();
-  if (addDocumentDialog->result() == QDialog::Accepted)
-    *changeNum += 1;
+  if (addDocumentDialog->result() == QDialog::Accepted) *changeNum += 1;
   autosaveMutex->unlock();
 }
 
@@ -283,8 +256,7 @@ void DocumentsWindow::goNode(DataBrick *dataBrick) {
 }
 
 void DocumentsWindow::removeDocument(Document *doc) {
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (not autosaveMutex->tryLock(3000)) return;
   DataBrick *curr = history.last();
   for (int i = 0; i < curr->brickDocuments.length(); i++) {
     if (curr->brickDocuments.at(i) == doc) {
@@ -298,10 +270,8 @@ void DocumentsWindow::removeDocument(Document *doc) {
 }
 
 void DocumentsWindow::saveDb() {
-  if (changeNum == 0)
-    return;
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (changeNum == 0) return;
+  if (not autosaveMutex->tryLock(3000)) return;
   navBar->setEnabled(false);
   data->db->generateData();
   data->db->syncDataBase();
@@ -312,19 +282,16 @@ void DocumentsWindow::saveDb() {
 
 void DocumentsWindow::exportDb() {
   navBar->setEnabled(false);
-  auto fileName = QFileDialog::getSaveFileName(
-      this, "Экспортировать в файл", QDir::homePath(), "База данных (*.xml)");
+  auto fileName = QFileDialog::getSaveFileName(this, "Экспортировать в файл", QDir::homePath(), "База данных (*.xml)");
   if (not fileName.isEmpty())
     exporter->exportDataBase(fileName);
   navBar->setEnabled(true);
 }
 
 void DocumentsWindow::importDb() {
-  if (not autosaveMutex->tryLock(3000))
-    return;
+  if (not autosaveMutex->tryLock(3000)) return;
   navBar->setEnabled(false);
-  auto fileName = QFileDialog::getOpenFileName(
-      this, "Импортировать из файла", QDir::homePath(), "База данных (*.xml)");
+  auto fileName = QFileDialog::getOpenFileName(this, "Импортировать из файла", QDir::homePath(), "База данных (*.xml)");
   auto docsDirNameDialog = QFileDialog(this);
   docsDirNameDialog.setFileMode(QFileDialog::Directory);
   docsDirNameDialog.setOption(QFileDialog::ShowDirsOnly, true);
@@ -349,8 +316,7 @@ void DocumentsWindow::importDb() {
 void DocumentsWindow::closeEvent(QCloseEvent *event) { event->ignore(); }
 
 void DocumentsWindow::openSearchDialog() {
-  auto *sd =
-      new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
+  auto *sd = new SearchDialog(data, history.last(), autosaveMutex, changeNum, this);
   connect(sd, &SearchDialog::openNodeInDW, this, &DocumentsWindow::goNode);
   sd->exec();
   drawNode();

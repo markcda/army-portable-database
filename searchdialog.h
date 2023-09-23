@@ -18,8 +18,7 @@ class SearchDialog : public QDialog {
   Q_OBJECT
 public:
   // Конструкторы:
-  SearchDialog(Data *_data, DataBrick *_brick, QMutex *mutex,
-               int *changeNum, QWidget *parent = nullptr);
+  SearchDialog(Data *_data, DataBrick *_brick, QMutex *mutex, int *changeNum, QWidget *parent = nullptr);
   // Методы:
   void searchAndDraw(QString ask);
 

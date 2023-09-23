@@ -235,36 +235,31 @@ void XMLDataBase::destroyDataBrick(DataBrick *dataBrick) {
   dataBrick->brickDocuments.clear();
 }
 
-QMap<int, QList<Document *>> XMLDataBase::searchDocuments(QString name,
-                                                          DataBrick *dataBrick) {
+QMap<int, QList<Document *>> XMLDataBase::searchDocuments(QString name, DataBrick *dataBrick) {
   QMap<int, QList<Document *>> docs;
   for (int i = name.split(" ").length(); i > 0; i--) docs.insert(i, QList<Document *>());
   for (auto *doc : dataBrick->brickDocuments) {
     int cntr = 0;
-    for (auto word : name.split(" "))
-      if (doc->name.toLower().contains(word.toLower())) cntr++;
-    if (cntr)
-      docs[cntr].append(doc);
-    for (auto *childBrick : dataBrick->brickNodes) {
-      QMap<int, QList<Document *>> new_docs = XMLDataBase::searchDocuments(name, childBrick);
-      for (int i = name.split(" ").length(); i > 0; i--) docs[i].append(new_docs[i]);
-    }
+    for (auto word : name.split(" ")) if (doc->name.toLower().contains(word.toLower())) cntr++;
+    if (cntr) docs[cntr].append(doc);
+  }
+  for (auto *childBrick : dataBrick->brickNodes) {
+    QMap<int, QList<Document *>> new_docs = XMLDataBase::searchDocuments(name, childBrick);
+    for (int i = new_docs.size(); i > 0; i--) docs[i].append(new_docs[i]);
   }
   return docs;
 }
 
-QMap<int, QList<DataBrick *>> XMLDataBase::searchNodes(QString name, 
-                                                       DataBrick *dataBrick) {
+QMap<int, QList<DataBrick *>> XMLDataBase::searchNodes(QString name, DataBrick *dataBrick) {
   QMap<int, QList<DataBrick *>> nodes;
   for (int i = name.split(" ").length(); i > 0; i--) nodes.insert(i, QList<DataBrick *>());
   int cntr = 0;
-  for (auto word : name.split(" "))
-    if (dataBrick->name.toLower().contains(word.toLower())) cntr++;
-  if (cntr)
-    nodes[cntr].append(dataBrick);
+  for (auto word : name.split(" ")) if (dataBrick->name.toLower().contains(word.toLower())) cntr++;
+  if (cntr) nodes[cntr].append(dataBrick);
   for (auto *childBrick : dataBrick->brickNodes) {
+    std::cout << "we are here: checking " << dataBrick->name.toStdString() << " nodes" << std::endl;
     QMap<int, QList<DataBrick *>> new_nodes = XMLDataBase::searchNodes(name, childBrick);
-    for (int i = name.split(" ").length(); i > 0; i--) nodes[i].append(new_nodes[i]);
+    for (int i = new_nodes.size(); i > 0; i--) nodes[i].append(new_nodes[i]);
   }
   return nodes;
 }

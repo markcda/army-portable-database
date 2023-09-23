@@ -26,8 +26,7 @@
 #endif
 #endif
 
-ImageViewer::ImageViewer(QWidget *parent)
-    : QMainWindow(parent), imageLabel(new QLabel), scrollArea(new QScrollArea) {
+ImageViewer::ImageViewer(QWidget *parent) : QMainWindow(parent), imageLabel(new QLabel), scrollArea(new QScrollArea) {
   imageLabel->setBackgroundRole(QPalette::Base);
   imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   imageLabel->setScaledContents(true);

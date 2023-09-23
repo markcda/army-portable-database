@@ -1,8 +1,6 @@
 #include "searchdialog.h"
 
-SearchDialog::SearchDialog(Data *_data, DataBrick *_brick,
-                           QMutex *mutex, int *changeNum, QWidget *parent)
-    : QDialog(parent) {
+SearchDialog::SearchDialog(Data *_data, DataBrick *_brick, QMutex *mutex, int *changeNum, QWidget *parent) : QDialog(parent) {
   setModal(true);
   resize(1000, 560);
   data = _data;
@@ -17,8 +15,7 @@ SearchDialog::SearchDialog(Data *_data, DataBrick *_brick,
   auto *searchBtn = new QPushButton(this);
   searchBtn->setText("Искать");
   searchBtn->setIcon(QIcon(":/arts/16/edit-find.svg"));
-  connect(searchBtn, &QPushButton::clicked, this,
-          [this, searcher]() { searchAndDraw(searcher->text()); });
+  connect(searchBtn, &QPushButton::clicked, this, [this, searcher]() { searchAndDraw(searcher->text()); });
   lt->addWidget(searchBtn, 0, 1);
   area = new QScrollArea(this);
   area->setWidgetResizable(true);
@@ -67,8 +64,7 @@ void SearchDialog::searchAndDraw(QString ask) {
       wlt->addWidget(d);
     }
   }
-  wlt->addItem(
-      new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
+  wlt->addItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
   w->setLayout(wlt);
   if (area->widget())
     area->widget()->hide();
